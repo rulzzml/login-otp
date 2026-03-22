@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Masuk - Arya Store</title>
-    <!-- Google Fonts - Poppins dengan berbagai weight -->
+    <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -201,7 +201,6 @@
             color: #999;
         }
 
-        /* Toggle password button */
         .toggle-password {
             position: absolute;
             right: 18px;
@@ -388,6 +387,20 @@
             font-weight: 500;
         }
 
+        .attempt-counter {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #999;
+            display: none;
+        }
+
+        .attempt-counter.show {
+            display: block;
+        }
+
+        /* MODAL OTP STYLES */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -395,12 +408,18 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -409,24 +428,39 @@
             padding: 40px;
             width: 100%;
             max-width: 420px;
+            animation: slideUp 0.4s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-content h3 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             margin-bottom: 10px;
             color: #333;
+            text-align: center;
         }
 
         .modal-content p {
             color: #666;
-            margin-bottom: 20px;
-            font-weight: 400;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 14px;
         }
 
         .modal-input-wrapper {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .modal-input-wrapper i {
@@ -443,8 +477,11 @@
             padding: 18px 18px 18px 55px;
             border: 2px solid #e0e0e0;
             border-radius: 20px;
-            font-size: 15px;
-            font-weight: 400;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 8px;
+            font-family: monospace;
         }
 
         .modal-input:focus {
@@ -455,6 +492,7 @@
         .modal-buttons {
             display: flex;
             gap: 12px;
+            margin-top: 10px;
         }
 
         .modal-btn {
@@ -465,6 +503,7 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 15px;
+            transition: all 0.3s;
         }
 
         .modal-btn-primary {
@@ -472,31 +511,63 @@
             color: white;
         }
 
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
         .modal-btn-secondary {
             background: #f0f0f0;
             color: #333;
         }
 
-        .attempt-counter {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 12px;
-            font-weight: 400;
-            color: #999;
-            display: none;
+        .modal-btn-secondary:hover {
+            background: #e0e0e0;
         }
 
-        .attempt-counter.show {
-            display: block;
+        .resend-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .resend-link a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .resend-link a:hover {
+            text-decoration: underline;
+        }
+
+        .timer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #f59e0b;
+            font-weight: 500;
+        }
+
+        .otp-error {
+            color: #c33;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
         }
 
         @media (max-width: 480px) {
             .container {
                 padding: 32px 24px;
             }
-            .action-row {
-                flex-direction: row;
-                align-items: center;
+            .modal-content {
+                padding: 30px 24px;
+            }
+            .modal-input {
+                font-size: 16px;
+                letter-spacing: 5px;
             }
         }
     </style>
@@ -521,10 +592,10 @@
 
         <form onsubmit="event.preventDefault(); login();">
             <div class="input-group">
-                <label>Email atau Nomor HP</label>
+                <label>Email / Username / Nomor HP</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="identifier" placeholder="Masukkan email atau nomor HP" required>
+                    <input type="text" id="identifier" placeholder="Masukkan email, username, atau nomor HP" required>
                 </div>
             </div>
 
@@ -576,28 +647,59 @@
         </div>
     </div>
 
-    <!-- Forgot Password Modal -->
-    <div id="forgotModal" class="modal-overlay">
+    <!-- MODAL OTP (Step 1: Input OTP) -->
+    <div id="otpModal" class="modal-overlay">
         <div class="modal-content">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <div style="width: 80px; height: 80px; background: linear-gradient(145deg, #667eea20, #764ba220); border-radius: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                    <i class="fas fa-key" style="font-size: 35px; color: #667eea;"></i>
-                </div>
-                <h3>Reset Kata Sandi</h3>
-                <p>Masukkan email Anda untuk mereset kata sandi</p>
-            </div>
-
+            <h3>🔐 Verifikasi OTP</h3>
+            <p>Kode OTP telah dikirim ke <strong id="otpEmailDisplay"></strong></p>
+            
             <div class="modal-input-wrapper">
-                <i class="fas fa-envelope"></i>
-                <input type="email" id="resetEmail" class="modal-input" placeholder="Email Anda">
+                <i class="fas fa-key"></i>
+                <input type="text" id="otpCode" class="modal-input" placeholder="000000" maxlength="6" autocomplete="off">
             </div>
-
-            <div id="resetAlert" class="alert" style="margin-bottom: 20px; display: none;"></div>
-
+            
+            <div id="otpError" class="otp-error">
+                <i class="fas fa-exclamation-circle"></i> <span id="otpErrorMessage"></span>
+            </div>
+            
             <div class="modal-buttons">
-                <button class="modal-btn modal-btn-secondary" onclick="hideForgotPassword()">Batal</button>
-                <button class="modal-btn modal-btn-primary" onclick="sendResetLink()" id="resetBtn">
-                    <span>Kirim Link Reset</span>
+                <button class="modal-btn modal-btn-secondary" onclick="closeOtpModal()">Batal</button>
+                <button class="modal-btn modal-btn-primary" onclick="verifyOtp()" id="verifyOtpBtn">
+                    Verifikasi
+                </button>
+            </div>
+            
+            <div class="resend-link">
+                <a onclick="resendOtp()" id="resendOtpLink">Kirim ulang kode?</a>
+            </div>
+            <div class="timer" id="otpTimer"></div>
+        </div>
+    </div>
+
+    <!-- MODAL RESET PASSWORD (Step 2: Set Password Baru) -->
+    <div id="resetPasswordModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>✨ Reset Password</h3>
+            <p>Buat password baru untuk akun Anda</p>
+            
+            <div class="modal-input-wrapper">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="newPassword" class="modal-input" placeholder="Password baru" style="letter-spacing: normal;">
+            </div>
+            
+            <div class="modal-input-wrapper">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="confirmNewPassword" class="modal-input" placeholder="Konfirmasi password baru" style="letter-spacing: normal;">
+            </div>
+            
+            <div id="resetError" class="otp-error">
+                <i class="fas fa-exclamation-circle"></i> <span id="resetErrorMessage"></span>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeResetModal()">Batal</button>
+                <button class="modal-btn modal-btn-primary" onclick="resetPassword()" id="resetPwBtn">
+                    Reset Password
                 </button>
             </div>
         </div>
@@ -615,11 +717,16 @@
             this.classList.toggle('fa-eye-slash');
         });
 
+        // Variables
         let loginAttempts = 0;
         const MAX_ATTEMPTS = 5;
         let isLocked = false;
         let lockTimer = null;
+        let currentResetEmail = '';
+        let resetToken = '';
+        let otpTimerInterval = null;
 
+        // Check URL params
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('registered') === 'true') {
             showAlert('Pendaftaran berhasil! Silakan masuk.', 'success');
@@ -715,7 +822,7 @@
                     loginAttempts++;
                     updateAttemptCounter();
                     if (loginAttempts >= MAX_ATTEMPTS) lockLogin();
-                    showAlert(data.error || 'Email/Password salah', 'error');
+                    showAlert(data.error || 'Email/Username/HP atau Password salah', 'error');
                     btn.innerHTML = originalText;
                     if (!isLocked) btn.disabled = false;
                 }
@@ -735,67 +842,246 @@
             setTimeout(() => alert.style.display = 'none', 4000);
         }
 
+        // ==================== FORGOT PASSWORD FUNCTIONS ====================
+        
         function showForgotPassword() {
-            document.getElementById('forgotModal').style.display = 'flex';
-            document.getElementById('resetAlert').style.display = 'none';
-            document.getElementById('resetEmail').value = '';
-        }
-
-        function hideForgotPassword() {
-            document.getElementById('forgotModal').style.display = 'none';
-        }
-
-        async function sendResetLink() {
-            const email = document.getElementById('resetEmail').value;
-            const resetAlert = document.getElementById('resetAlert');
-            const btn = document.getElementById('resetBtn');
-            
-            if (!email || !email.includes('@') || !email.includes('.')) {
-                resetAlert.className = 'alert';
-                resetAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email tidak valid!';
-                resetAlert.style.display = 'block';
+            const identifier = document.getElementById('identifier').value;
+            if (!identifier) {
+                showAlert('Masukkan email/username/HP terlebih dahulu!', 'error');
                 return;
             }
+            
+            // Cek user dulu
+            fetch('/api/check-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists && data.user.email) {
+                    currentResetEmail = data.user.email;
+                    sendOtpToEmail(currentResetEmail);
+                } else if (data.exists && !data.user.email) {
+                    showAlert('Akun Anda tidak memiliki email. Hubungi admin.', 'error');
+                } else {
+                    showAlert('Akun tidak ditemukan!', 'error');
+                }
+            })
+            .catch(err => {
+                showAlert('Gagal memeriksa akun. Coba lagi.', 'error');
+            });
+        }
 
+        async function sendOtpToEmail(email) {
+            console.log('Sending OTP to:', email);
+            
+            const btn = document.getElementById('loginBtn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim OTP...';
             btn.disabled = true;
-
+            
             try {
-                const res = await fetch('/api/forgot-password', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ email }) 
+                const res = await fetch('/api/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
                 });
+                
                 const data = await res.json();
                 
                 if (data.success) {
-                    resetAlert.className = 'alert success';
-                    resetAlert.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
-                    resetAlert.style.display = 'block';
-                    document.getElementById('resetEmail').value = '';
-                    setTimeout(hideForgotPassword, 3000);
+                    // Tampilkan modal OTP
+                    document.getElementById('otpEmailDisplay').innerText = email;
+                    document.getElementById('otpModal').style.display = 'flex';
+                    document.getElementById('otpCode').value = '';
+                    document.getElementById('otpError').style.display = 'none';
+                    startOtpTimer(600); // 10 menit = 600 detik
+                    
+                    showAlert('Kode OTP telah dikirim ke email Anda!', 'success');
                 } else {
-                    resetAlert.className = 'alert';
-                    resetAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
-                    resetAlert.style.display = 'block';
+                    showAlert(data.message || 'Gagal mengirim OTP', 'error');
                 }
             } catch (error) {
-                resetAlert.className = 'alert';
-                resetAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Gagal memproses permintaan.';
-                resetAlert.style.display = 'block';
+                showAlert('Gagal mengirim OTP. Coba lagi.', 'error');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
+        function startOtpTimer(seconds) {
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            
+            const timerElement = document.getElementById('otpTimer');
+            const resendLink = document.getElementById('resendOtpLink');
+            
+            let remaining = seconds;
+            
+            otpTimerInterval = setInterval(() => {
+                if (remaining <= 0) {
+                    clearInterval(otpTimerInterval);
+                    timerElement.innerHTML = '⏰ Kode sudah kadaluarsa. Kirim ulang!';
+                    timerElement.style.color = '#dc3545';
+                    resendLink.style.pointerEvents = 'auto';
+                    resendLink.style.opacity = '1';
+                } else {
+                    const minutes = Math.floor(remaining / 60);
+                    const secs = remaining % 60;
+                    timerElement.innerHTML = `⏱️ Kode berlaku selama ${minutes}:${secs.toString().padStart(2, '0')}`;
+                    timerElement.style.color = '#f59e0b';
+                    resendLink.style.pointerEvents = 'none';
+                    resendLink.style.opacity = '0.5';
+                    remaining--;
+                }
+            }, 1000);
+        }
+
+        async function verifyOtp() {
+            const otp = document.getElementById('otpCode').value;
+            
+            if (!otp || otp.length !== 6) {
+                document.getElementById('otpErrorMessage').innerText = 'Masukkan kode OTP 6 digit!';
+                document.getElementById('otpError').style.display = 'block';
+                return;
+            }
+            
+            const btn = document.getElementById('verifyOtpBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentResetEmail, otp })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    resetToken = data.resetToken;
+                    closeOtpModal();
+                    showResetPasswordModal();
+                } else {
+                    document.getElementById('otpErrorMessage').innerText = data.message;
+                    document.getElementById('otpError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('otpErrorMessage').innerText = 'Gagal verifikasi. Coba lagi.';
+                document.getElementById('otpError').style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function resendOtp() {
+            const timerElement = document.getElementById('otpTimer');
+            if (timerElement.innerText.includes('kadaluarsa') || timerElement.innerText.includes('00:00')) {
+                await sendOtpToEmail(currentResetEmail);
+                startOtpTimer(600);
+            } else {
+                showAlert('Tunggu sampai kode kadaluarsa sebelum meminta ulang!', 'warning');
+            }
+        }
+
+        function closeOtpModal() {
+            document.getElementById('otpModal').style.display = 'none';
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+        }
+
+        function showResetPasswordModal() {
+            document.getElementById('resetPasswordModal').style.display = 'flex';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            document.getElementById('resetError').style.display = 'none';
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetPasswordModal').style.display = 'none';
+            currentResetEmail = '';
+            resetToken = '';
+        }
+
+        async function resetPassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (!newPassword || newPassword.length < 6) {
+                document.getElementById('resetErrorMessage').innerText = 'Password minimal 6 karakter!';
+                document.getElementById('resetError').style.display = 'block';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                document.getElementById('resetErrorMessage').innerText = 'Password tidak cocok!';
+                document.getElementById('resetError').style.display = 'block';
+                return;
+            }
+            
+            const btn = document.getElementById('resetPwBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mereset...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentResetEmail, newPassword })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    showAlert('Password berhasil direset! Silakan login dengan password baru.', 'success');
+                    closeResetModal();
+                    
+                    // Clear password field
+                    document.getElementById('password').value = '';
+                } else {
+                    document.getElementById('resetErrorMessage').innerText = data.message;
+                    document.getElementById('resetError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('resetErrorMessage').innerText = 'Gagal reset password. Coba lagi.';
+                document.getElementById('resetError').style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Enter key support
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') login();
         });
+        
+        document.getElementById('otpCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') verifyOtp();
+        });
+        
+        document.getElementById('newPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') resetPassword();
+        });
+        
+        document.getElementById('confirmNewPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') resetPassword();
+        });
 
+        // Auto format OTP input
+        document.getElementById('otpCode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+        });
+        
+        // Close modals when clicking outside
         window.onclick = function(event) {
-            if (event.target === document.getElementById('forgotModal')) hideForgotPassword();
+            const otpModal = document.getElementById('otpModal');
+            const resetModal = document.getElementById('resetPasswordModal');
+            if (event.target === otpModal) closeOtpModal();
+            if (event.target === resetModal) closeResetModal();
         }
     </script>
 </body>

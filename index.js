@@ -12,8 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// ==================== DATA USER (Langsung, tanpa database) ====================
-// Data user disimpan dalam array object
+// ==================== DATA USER ====================
 const users = [
     {
         id: 1,
@@ -55,7 +54,6 @@ const otpStore = new Map();
 const EMAIL_USER = 'rulzzofficial628@gmail.com';      // Ganti dengan email Gmail Anda
 const EMAIL_PASS = 'ivqh ufzo ebvv hsad';      // Ganti dengan App Password Gmail Anda
 
-// Konfigurasi transporter SMTP Gmail
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -69,13 +67,10 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Cek koneksi SMTP saat server start
 transporter.verify((error, success) => {
     if (error) {
         console.log('❌ SMTP GAGAL TERHUBUNG!');
         console.log('Error:', error.message);
-        console.log('Pastikan EMAIL_USER dan EMAIL_PASS sudah benar');
-        console.log('Gunakan App Password dari Gmail, bukan password biasa');
     } else {
         console.log('✅ SMTP Gmail Siap! Email terhubung:', EMAIL_USER);
     }
@@ -83,23 +78,17 @@ transporter.verify((error, success) => {
 
 // ==================== API ENDPOINTS ====================
 
-// 1. Endpoint Login
+// 1. Login
 app.post('/api/login', (req, res) => {
     const { identifier, password, rememberMe } = req.body;
     
-    console.log(`🔐 Login attempt: ${identifier}`);
-    
-    // Cari user berdasarkan email, username, atau nomor HP
     const user = users.find(u => 
         u.email === identifier || 
         u.phone === identifier ||
         u.username === identifier
     );
     
-    // Validasi user dan password
     if (user && user.password === password) {
-        console.log(`✅ Login sukses: ${user.email || user.username} (${user.role})`);
-        
         res.json({
             success: true,
             message: 'Login berhasil',
@@ -114,7 +103,6 @@ app.post('/api/login', (req, res) => {
             redirect: user.role === 'admin' ? '/admin/dashboard' : '/dashboard'
         });
     } else {
-        console.log(`❌ Login gagal: ${identifier}`);
         res.status(401).json({
             success: false,
             error: 'Email/Username/HP atau Password salah'
@@ -122,73 +110,39 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// 2. Endpoint Register
+// 2. Register
 app.post('/api/register', (req, res) => {
     const { username, email, phone, password } = req.body;
     
-    console.log(`📝 Register attempt: ${username} (${email || phone})`);
-    
-    // Validasi input
     if (!username || username.length < 3) {
-        return res.status(400).json({
-            success: false,
-            error: 'Username minimal 3 karakter'
-        });
+        return res.status(400).json({ success: false, error: 'Username minimal 3 karakter' });
     }
-    
     if (!password || password.length < 6) {
-        return res.status(400).json({
-            success: false,
-            error: 'Password minimal 6 karakter'
-        });
+        return res.status(400).json({ success: false, error: 'Password minimal 6 karakter' });
     }
-    
     if (!email && !phone) {
-        return res.status(400).json({
-            success: false,
-            error: 'Email atau Nomor HP harus diisi'
-        });
+        return res.status(400).json({ success: false, error: 'Email atau Nomor HP harus diisi' });
     }
     
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({
-            success: false,
-            error: 'Format email tidak valid'
-        });
-    }
-    
-    // Cek apakah username sudah ada
     const existingUsername = users.find(u => u.username === username);
     if (existingUsername) {
-        return res.status(400).json({
-            success: false,
-            error: 'Username sudah terdaftar'
-        });
+        return res.status(400).json({ success: false, error: 'Username sudah terdaftar' });
     }
     
-    // Cek apakah email sudah ada (jika email diisi)
     if (email) {
         const existingEmail = users.find(u => u.email === email);
         if (existingEmail) {
-            return res.status(400).json({
-                success: false,
-                error: 'Email sudah terdaftar'
-            });
+            return res.status(400).json({ success: false, error: 'Email sudah terdaftar' });
         }
     }
     
-    // Cek apakah nomor HP sudah ada (jika phone diisi)
     if (phone) {
         const existingPhone = users.find(u => u.phone === phone);
         if (existingPhone) {
-            return res.status(400).json({
-                success: false,
-                error: 'Nomor HP sudah terdaftar'
-            });
+            return res.status(400).json({ success: false, error: 'Nomor HP sudah terdaftar' });
         }
     }
     
-    // Buat user baru
     const newId = users.length + 1;
     const newUser = {
         id: newId,
@@ -203,9 +157,6 @@ app.post('/api/register', (req, res) => {
     
     users.push(newUser);
     
-    console.log(`✅ User baru terdaftar: ${username} (${email || phone})`);
-    console.log(`📊 Total users sekarang: ${users.length}`);
-    
     res.json({
         success: true,
         message: 'Registrasi berhasil! Silakan login.',
@@ -219,17 +170,29 @@ app.post('/api/register', (req, res) => {
     });
 });
 
-// 3. Endpoint Forgot Password (Kirim OTP ke email)
+// 3. Check User (untuk forgot password)
+app.post('/api/check-user', (req, res) => {
+    const { identifier } = req.body;
+    
+    const user = users.find(u => 
+        u.email === identifier || 
+        u.phone === identifier ||
+        u.username === identifier
+    );
+    
+    res.json({
+        exists: !!user,
+        user: user ? { name: user.name, email: user.email, username: user.username } : null
+    });
+});
+
+// 4. Forgot Password - Kirim OTP
 app.post('/api/forgot-password', async (req, res) => {
     const { email } = req.body;
     
-    console.log(`🔑 Forgot password request for: ${email}`);
-    
-    // Cek apakah email terdaftar
     const user = users.find(u => u.email === email);
     
     if (!user) {
-        console.log(`❌ Email tidak terdaftar: ${email}`);
         return res.status(404).json({
             success: false,
             message: 'Email tidak terdaftar dalam sistem kami.'
@@ -238,18 +201,16 @@ app.post('/api/forgot-password', async (req, res) => {
     
     // Generate OTP 6 digit
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 menit expired
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 menit
     
-    // Simpan OTP
     otpStore.set(email, {
         code: otp,
         expiresAt: expiresAt,
         attempts: 0
     });
     
-    console.log(`📧 OTP untuk ${email}: ${otp} (berlaku 10 menit)`);
+    console.log(`📧 OTP untuk ${email}: ${otp}`);
     
-    // Kirim email OTP
     try {
         const mailOptions = {
             from: `"Arya Store" <${EMAIL_USER}>`,
@@ -259,14 +220,14 @@ app.post('/api/forgot-password', async (req, res) => {
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
                     <div style="text-align: center; margin-bottom: 20px;">
                         <div style="width: 60px; height: 60px; background: linear-gradient(145deg, #667eea, #764ba2); border-radius: 15px; display: inline-flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-store" style="color: white; font-size: 30px;"></i>
+                            <span style="color: white; font-size: 30px;">🛍️</span>
                         </div>
                         <h2 style="color: #333; margin-top: 15px;">Arya Store</h2>
                     </div>
                     
                     <h3 style="color: #667eea;">Reset Password</h3>
                     <p>Halo <strong>${user.name}</strong>,</p>
-                    <p>Kami menerima permintaan untuk mereset password akun Anda. Gunakan kode OTP berikut untuk melanjutkan:</p>
+                    <p>Kami menerima permintaan untuk mereset password akun Anda. Gunakan kode OTP berikut:</p>
                     
                     <div style="background-color: #f5f5f5; padding: 20px; text-align: center; border-radius: 10px; margin: 25px 0;">
                         <h1 style="color: #667eea; font-size: 42px; letter-spacing: 8px; margin: 0;">${otp}</h1>
@@ -276,7 +237,7 @@ app.post('/api/forgot-password', async (req, res) => {
                     <p>Jika Anda tidak meminta reset password, abaikan email ini.</p>
                     
                     <hr style="margin: 20px 0;">
-                    <p style="color: #666; font-size: 12px;">Email ini dikirim otomatis oleh sistem Arya Store. Mohon tidak membalas email ini.</p>
+                    <p style="color: #666; font-size: 12px;">Email ini dikirim otomatis oleh sistem Arya Store.</p>
                 </div>
             `,
             text: `Kode OTP reset password Anda adalah: ${otp}. Kode ini berlaku 10 menit.`
@@ -284,23 +245,21 @@ app.post('/api/forgot-password', async (req, res) => {
         
         await transporter.sendMail(mailOptions);
         
-        console.log(`✅ Email OTP terkirim ke ${email}`);
-        
         res.json({
             success: true,
-            message: 'Kode OTP telah dikirim ke email Anda. Periksa inbox atau folder spam.'
+            message: 'Kode OTP telah dikirim ke email Anda.'
         });
         
     } catch (error) {
-        console.error('❌ Gagal mengirim email:', error.message);
+        console.error('Gagal kirim email:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Gagal mengirim email. Silakan coba lagi nanti.'
+            message: 'Gagal mengirim email. Coba lagi nanti.'
         });
     }
 });
 
-// 4. Endpoint Verifikasi OTP
+// 5. Verify OTP
 app.post('/api/verify-otp', (req, res) => {
     const { email, otp } = req.body;
     
@@ -327,20 +286,21 @@ app.post('/api/verify-otp', (req, res) => {
         res.json({
             success: true,
             message: 'OTP valid. Silakan buat password baru.',
-            resetToken: 'dummy-reset-token-' + Date.now()
+            resetToken: 'reset-token-' + Date.now()
         });
     } else {
         storedData.attempts++;
         otpStore.set(email, storedData);
         
+        const attemptsLeft = 3 - storedData.attempts;
         res.status(400).json({
             success: false,
-            message: `Kode OTP salah. Sisa ${3 - storedData.attempts} percobaan.`
+            message: `Kode OTP salah. Sisa ${attemptsLeft} percobaan.`
         });
     }
 });
 
-// 5. Endpoint Reset Password
+// 6. Reset Password
 app.post('/api/reset-password', (req, res) => {
     const { email, newPassword } = req.body;
     
@@ -363,22 +323,6 @@ app.post('/api/reset-password', (req, res) => {
     });
 });
 
-// 6. Endpoint Check User
-app.post('/api/check-user', (req, res) => {
-    const { identifier } = req.body;
-    
-    const user = users.find(u => 
-        u.email === identifier || 
-        u.phone === identifier ||
-        u.username === identifier
-    );
-    
-    res.json({
-        exists: !!user,
-        user: user ? { name: user.name, email: user.email, username: user.username } : null
-    });
-});
-
 // 7. Serve halaman
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
@@ -397,8 +341,7 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         timestamp: new Date(),
-        usersCount: users.length,
-        smtpConfigured: EMAIL_USER !== 'emailanda@gmail.com'
+        usersCount: users.length
     });
 });
 
@@ -416,11 +359,8 @@ app.listen(PORT, () => {
     
     console.log('\n📋 Daftar Akun Demo:');
     users.forEach(u => {
-        console.log(`   - ${u.username} (${u.email || u.phone}) / ${u.password} (${u.role})`);
+        console.log(`   - ${u.username} (${u.email || u.phone}) / ${u.password}`);
     });
-    console.log('\n💡 Tips:');
-    console.log('   1. Ganti EMAIL_USER dan EMAIL_PASS dengan data Gmail Anda');
-    console.log('   2. Gunakan App Password dari Gmail, bukan password biasa');
-    console.log('   3. Akses http://localhost:3000 untuk halaman login');
-    console.log('   4. Akses http://localhost:3000/register untuk daftar akun baru');
+    console.log('\n💡 Fitur OTP sudah aktif!');
+    console.log('   Klik "Lupa Kata Sandi" untuk mencoba reset password via OTP email\n');
 });
