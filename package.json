@@ -2,10 +2,10 @@
   "name": "arya-store-auth",
   "version": "1.0.0",
   "description": "Arya Store Authentication with MongoDB",
-  "main": "index-mongodb.js",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node index-mongodb.js",
-    "dev": "nodemon index-mongodb.js"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
   },
   "dependencies": {
     "express": "^4.18.2",
