@@ -2,9 +2,10 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const path = require('path');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -12,107 +13,139 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// ==================== DATA USER ====================
-const users = [
-    {
-        id: 1,
-        username: 'admin',
-        email: 'admin@aryastore.com',
-        password: 'admin123',
-        name: 'Admin Arya',
-        phone: '081234567890',
-        role: 'admin',
-        createdAt: '2024-01-01T00:00:00.000Z'
-    },
-    {
-        id: 2,
-        username: 'user',
-        email: 'user@aryastore.com',
-        password: 'user123',
-        name: 'User Biasa',
-        phone: '081298765432',
-        role: 'user',
-        createdAt: '2024-01-01T00:00:00.000Z'
-    },
-    {
-        id: 3,
-        username: 'rulzz',
-        email: 'khoirull1841@gmail.com',
-        password: 'rulzz123',
-        name: 'Rulzz Test',
-        phone: '081255555555',
-        role: 'user',
-        createdAt: '2024-01-01T00:00:00.000Z'
-    }
-];
+// ==================== KONFIGURASI MONGODB ====================
+// GANTI DENGAN CONNECTION STRING DARI MONGODB ATLAS!
+const MONGODB_URI = 'mongodb+srv://rulzzofficial:Rulzz0411@login-otp.xtqqqnc.mongodb.net/';
+const DB_NAME = 'Login-OTP';
 
-// Simpan OTP sementara (untuk reset password)
-const otpStore = new Map();
+let db;
+let usersCollection;
+let otpCollection;
+
+// Koneksi ke MongoDB
+async function connectDB() {
+    try {
+        const client = new MongoClient(MONGODB_URI);
+        await client.connect();
+        db = client.db(DB_NAME);
+        usersCollection = db.collection('users');
+        otpCollection = db.collection('otps');
+        
+        // Buat index untuk performance
+        await usersCollection.createIndex({ email: 1 }, { unique: true });
+        await usersCollection.createIndex({ username: 1 }, { unique: true });
+        await usersCollection.createIndex({ phone: 1 }, { unique: true, sparse: true });
+        await otpCollection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // Auto delete expired OTP
+        
+        console.log('✅ MongoDB Connected!');
+        
+        // Seed data awal jika kosong
+        const userCount = await usersCollection.countDocuments();
+        if (userCount === 0) {
+            await seedInitialData();
+        }
+        
+    } catch (error) {
+        console.error('❌ MongoDB Connection Error:', error);
+        process.exit(1);
+    }
+}
+
+// Seed data awal
+async function seedInitialData() {
+    const initialUsers = [
+        {
+            username: 'admin',
+            email: 'admin@aryastore.com',
+            password: 'admin123',
+            name: 'Admin Arya',
+            phone: '081234567890',
+            role: 'admin',
+            createdAt: new Date()
+        },
+        {
+            username: 'user',
+            email: 'user@aryastore.com',
+            password: 'user123',
+            name: 'User Biasa',
+            phone: '081298765432',
+            role: 'user',
+            createdAt: new Date()
+        },
+        {
+            username: 'rulzz',
+            email: 'khoirull1841@gmail.com',
+            password: 'rulzz123',
+            name: 'Rulzz Test',
+            phone: '081255555555',
+            role: 'user',
+            createdAt: new Date()
+        }
+    ];
+    
+    await usersCollection.insertMany(initialUsers);
+    console.log('📦 Seed data inserted!');
+}
 
 // ==================== KONFIGURASI SMTP GMAIL ====================
 const EMAIL_USER = 'rulzzofficial628@gmail.com';
-const EMAIL_PASS = 'ivqh ufzo ebvv hsad';  // App Password
+const EMAIL_PASS = 'ivqh ufzo ebvv hsad';
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
-    auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS,
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
+    auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+    tls: { rejectUnauthorized: false }
 });
 
-transporter.verify((error, success) => {
-    if (error) {
-        console.log('❌ SMTP GAGAL TERHUBUNG!');
-        console.log('Error:', error.message);
-    } else {
-        console.log('✅ SMTP Gmail Siap! Email terhubung:', EMAIL_USER);
-    }
+transporter.verify((error) => {
+    if (error) console.log('❌ SMTP Error:', error.message);
+    else console.log('✅ SMTP Ready!');
 });
 
 // ==================== API ENDPOINTS ====================
 
 // 1. Login
-app.post('/api/login', (req, res) => {
-    const { identifier, password, rememberMe } = req.body;
+app.post('/api/login', async (req, res) => {
+    const { identifier, password } = req.body;
     
-    const user = users.find(u => 
-        u.email === identifier || 
-        u.phone === identifier ||
-        u.username === identifier
-    );
-    
-    if (user && user.password === password) {
-        res.json({
-            success: true,
-            message: 'Login berhasil',
-            user: {
-                id: user.id,
-                username: user.username,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                role: user.role
-            },
-            redirect: user.role === 'admin' ? '/admin/dashboard' : '/dashboard'
+    try {
+        const user = await usersCollection.findOne({
+            $or: [
+                { email: identifier },
+                { phone: identifier },
+                { username: identifier }
+            ]
         });
-    } else {
-        res.status(401).json({
-            success: false,
-            error: 'Email/Username/HP atau Password salah'
-        });
+        
+        if (user && user.password === password) {
+            res.json({
+                success: true,
+                message: 'Login berhasil',
+                user: {
+                    id: user._id,
+                    username: user.username,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role
+                },
+                redirect: user.role === 'admin' ? '/admin/dashboard' : '/dashboard'
+            });
+        } else {
+            res.status(401).json({ success: false, error: 'Email/Username/HP atau Password salah' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Server error' });
     }
 });
 
 // 2. Register
-app.post('/api/register', (req, res) => {
+app.post('/api/register', async (req, res) => {
     const { username, email, phone, password } = req.body;
     
+    // Validasi
     if (!username || username.length < 3) {
         return res.status(400).json({ success: false, error: 'Username minimal 3 karakter' });
     }
@@ -123,231 +156,177 @@ app.post('/api/register', (req, res) => {
         return res.status(400).json({ success: false, error: 'Email atau Nomor HP harus diisi' });
     }
     
-    const existingUsername = users.find(u => u.username === username);
-    if (existingUsername) {
-        return res.status(400).json({ success: false, error: 'Username sudah terdaftar' });
-    }
-    
-    if (email) {
-        const existingEmail = users.find(u => u.email === email);
-        if (existingEmail) {
-            return res.status(400).json({ success: false, error: 'Email sudah terdaftar' });
+    try {
+        // Cek duplikat
+        const existingUser = await usersCollection.findOne({
+            $or: [
+                { username },
+                { email: email || undefined },
+                { phone: phone || undefined }
+            ].filter(Boolean)
+        });
+        
+        if (existingUser) {
+            if (existingUser.username === username) {
+                return res.status(400).json({ success: false, error: 'Username sudah terdaftar' });
+            }
+            if (existingUser.email === email) {
+                return res.status(400).json({ success: false, error: 'Email sudah terdaftar' });
+            }
+            if (existingUser.phone === phone) {
+                return res.status(400).json({ success: false, error: 'Nomor HP sudah terdaftar' });
+            }
         }
+        
+        const newUser = {
+            username,
+            email: email || null,
+            phone: phone || null,
+            password,
+            name: username,
+            role: 'user',
+            createdAt: new Date()
+        };
+        
+        const result = await usersCollection.insertOne(newUser);
+        
+        res.json({
+            success: true,
+            message: 'Registrasi berhasil! Silakan login.',
+            user: {
+                id: result.insertedId,
+                username,
+                email,
+                phone,
+                role: 'user'
+            }
+        });
+        
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Registrasi gagal' });
     }
-    
-    if (phone) {
-        const existingPhone = users.find(u => u.phone === phone);
-        if (existingPhone) {
-            return res.status(400).json({ success: false, error: 'Nomor HP sudah terdaftar' });
-        }
-    }
-    
-    const newId = users.length + 1;
-    const newUser = {
-        id: newId,
-        username: username,
-        email: email || null,
-        phone: phone || null,
-        password: password,
-        name: username,
-        role: 'user',
-        createdAt: new Date().toISOString()
-    };
-    
-    users.push(newUser);
-    
-    res.json({
-        success: true,
-        message: 'Registrasi berhasil! Silakan login.',
-        user: {
-            id: newUser.id,
-            username: newUser.username,
-            email: newUser.email,
-            phone: newUser.phone,
-            role: newUser.role
-        }
-    });
 });
 
 // 3. Forgot Password - Kirim OTP
 app.post('/api/forgot-password', async (req, res) => {
     const { email } = req.body;
     
-    const user = users.find(u => u.email === email);
-    
-    if (!user) {
-        return res.status(404).json({
-            success: false,
-            message: 'Email tidak terdaftar dalam sistem kami.'
-        });
-    }
-    
-    // Generate OTP 6 digit
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 menit
-    
-    otpStore.set(email, {
-        code: otp,
-        expiresAt: expiresAt,
-        attempts: 0
-    });
-    
-    console.log(`📧 OTP untuk ${email}: ${otp}`);
-    
     try {
-        const mailOptions = {
+        const user = await usersCollection.findOne({ email });
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Email tidak terdaftar' });
+        }
+        
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        
+        // Simpan OTP ke database
+        await otpCollection.insertOne({
+            email,
+            code: otp,
+            expiresAt,
+            attempts: 0,
+            createdAt: new Date()
+        });
+        
+        console.log(`📧 OTP untuk ${email}: ${otp}`);
+        
+        await transporter.sendMail({
             from: `"Arya Store" <${EMAIL_USER}>`,
             to: email,
             subject: '🔐 Reset Password - Arya Store',
             html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="width: 60px; height: 60px; background: linear-gradient(145deg, #667eea, #764ba2); border-radius: 15px; display: inline-flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 30px;">🛍️</span>
-                        </div>
-                        <h2 style="color: #333; margin-top: 15px;">Arya Store</h2>
-                    </div>
-                    
-                    <h3 style="color: #667eea;">Reset Password</h3>
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2 style="color: #667eea;">Reset Password</h2>
                     <p>Halo <strong>${user.name}</strong>,</p>
-                    <p>Kami menerima permintaan untuk mereset password akun Anda. Gunakan kode OTP berikut:</p>
-                    
-                    <div style="background-color: #f5f5f5; padding: 20px; text-align: center; border-radius: 10px; margin: 25px 0;">
-                        <h1 style="color: #667eea; font-size: 42px; letter-spacing: 8px; margin: 0;">${otp}</h1>
+                    <p>Kode OTP Anda:</p>
+                    <div style="background: #f5f5f5; padding: 20px; text-align: center;">
+                        <h1 style="color: #667eea; font-size: 42px;">${otp}</h1>
                     </div>
-                    
-                    <p>Kode ini berlaku selama <strong>10 menit</strong>.</p>
-                    <p>Jika Anda tidak meminta reset password, abaikan email ini.</p>
-                    
-                    <hr style="margin: 20px 0;">
-                    <p style="color: #666; font-size: 12px;">Email ini dikirim otomatis oleh sistem Arya Store.</p>
+                    <p>Kode berlaku 10 menit.</p>
                 </div>
-            `,
-            text: `Kode OTP reset password Anda adalah: ${otp}. Kode ini berlaku 10 menit.`
-        };
-        
-        await transporter.sendMail(mailOptions);
-        
-        res.json({
-            success: true,
-            message: 'Kode OTP telah dikirim ke email Anda.'
+            `
         });
+        
+        res.json({ success: true, message: 'Kode OTP telah dikirim' });
         
     } catch (error) {
-        console.error('Gagal kirim email:', error.message);
-        res.status(500).json({
-            success: false,
-            message: 'Gagal mengirim email. Coba lagi nanti.'
-        });
+        res.status(500).json({ success: false, message: 'Gagal mengirim OTP' });
     }
 });
 
 // 4. Verify OTP
-app.post('/api/verify-otp', (req, res) => {
+app.post('/api/verify-otp', async (req, res) => {
     const { email, otp } = req.body;
     
-    const storedData = otpStore.get(email);
-    
-    if (!storedData) {
-        return res.status(400).json({
-            success: false,
-            message: 'OTP tidak ditemukan. Silakan minta kode baru.'
-        });
-    }
-    
-    if (Date.now() > storedData.expiresAt) {
-        otpStore.delete(email);
-        return res.status(400).json({
-            success: false,
-            message: 'Kode OTP sudah kadaluarsa. Silakan minta kode baru.'
-        });
-    }
-    
-    if (storedData.code === otp) {
-        otpStore.delete(email);
+    try {
+        const otpData = await otpCollection.findOne({ email, code: otp });
+        
+        if (!otpData) {
+            return res.status(400).json({ success: false, message: 'OTP tidak ditemukan' });
+        }
+        
+        if (new Date() > otpData.expiresAt) {
+            await otpCollection.deleteOne({ _id: otpData._id });
+            return res.status(400).json({ success: false, message: 'OTP sudah kadaluarsa' });
+        }
+        
+        await otpCollection.deleteOne({ _id: otpData._id });
         
         res.json({
             success: true,
-            message: 'OTP valid. Silakan buat password baru.',
+            message: 'OTP valid',
             resetToken: 'reset-token-' + Date.now()
         });
-    } else {
-        storedData.attempts++;
-        otpStore.set(email, storedData);
         
-        const attemptsLeft = 3 - storedData.attempts;
-        res.status(400).json({
-            success: false,
-            message: `Kode OTP salah. Sisa ${attemptsLeft} percobaan.`
-        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Verifikasi gagal' });
     }
 });
 
 // 5. Reset Password
-app.post('/api/reset-password', (req, res) => {
+app.post('/api/reset-password', async (req, res) => {
     const { email, newPassword } = req.body;
     
-    const userIndex = users.findIndex(u => u.email === email);
-    
-    if (userIndex === -1) {
-        return res.status(404).json({
-            success: false,
-            message: 'User tidak ditemukan.'
-        });
+    try {
+        const result = await usersCollection.updateOne(
+            { email },
+            { $set: { password: newPassword } }
+        );
+        
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+        }
+        
+        res.json({ success: true, message: 'Password berhasil direset' });
+        
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Reset password gagal' });
     }
-    
-    users[userIndex].password = newPassword;
-    
-    console.log(`✅ Password berhasil direset untuk: ${email}`);
-    
-    res.json({
-        success: true,
-        message: 'Password berhasil direset. Silakan login dengan password baru.'
-    });
 });
 
 // 6. Serve halaman
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, 'register.html'));
-});
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'register.html')));
 
 // 7. Health check
-app.get('/api/health', (req, res) => {
-    res.json({ 
-        status: 'OK', 
-        timestamp: new Date(),
-        usersCount: users.length
-    });
+app.get('/api/health', async (req, res) => {
+    const userCount = await usersCollection.countDocuments();
+    res.json({ status: 'OK', users: userCount, timestamp: new Date() });
 });
 
 // ==================== START SERVER ====================
-app.listen(PORT, () => {
-    console.log(`
-    ╔════════════════════════════════════════╗
-    ║     🚀 Arya Store Server Running       ║
-    ╠════════════════════════════════════════╣
-    ║  URL: http://localhost:${PORT}          ║
-    ║  SMTP: ✅ Configured (${EMAIL_USER})    ║
-    ║  Users: ${users.length} user terdaftar    ║
-    ╚════════════════════════════════════════╝
-    `);
-    
-    console.log('\n📋 Daftar Akun Demo:');
-    users.forEach(u => {
-        console.log(`   - ${u.username} (${u.email || u.phone}) / ${u.password}`);
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`
+        ╔════════════════════════════════════════╗
+        ║   🚀 Arya Store with MongoDB Ready     ║
+        ╠════════════════════════════════════════╣
+        ║  URL: http://localhost:${PORT}          ║
+        ║  Database: MongoDB Atlas               ║
+        ╚════════════════════════════════════════╝
+        `);
     });
-    console.log('\n💡 Fitur Reset Password dengan Popup:');
-    console.log('   1. Klik "Lupa Kata Sandi"');
-    console.log('   2. Masukkan email (khoirull1841@gmail.com)');
-    console.log('   3. Cek email, dapat OTP');
-    console.log('   4. Masukkan OTP di popup');
-    console.log('   5. Buat password baru\n');
 });
