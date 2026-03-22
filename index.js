@@ -50,9 +50,8 @@ const users = [
 const otpStore = new Map();
 
 // ==================== KONFIGURASI SMTP GMAIL ====================
-// GANTI DENGAN DATA GMAIL ANDA!
-const EMAIL_USER = 'rulzzofficial628@gmail.com';      // Ganti dengan email Gmail Anda
-const EMAIL_PASS = 'ivqh ufzo ebvv hsad';      // Ganti dengan App Password Gmail Anda
+const EMAIL_USER = 'rulzzofficial628@gmail.com';
+const EMAIL_PASS = 'ivqh ufzo ebvv hsad';  // App Password
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -170,23 +169,7 @@ app.post('/api/register', (req, res) => {
     });
 });
 
-// 3. Check User (untuk forgot password)
-app.post('/api/check-user', (req, res) => {
-    const { identifier } = req.body;
-    
-    const user = users.find(u => 
-        u.email === identifier || 
-        u.phone === identifier ||
-        u.username === identifier
-    );
-    
-    res.json({
-        exists: !!user,
-        user: user ? { name: user.name, email: user.email, username: user.username } : null
-    });
-});
-
-// 4. Forgot Password - Kirim OTP
+// 3. Forgot Password - Kirim OTP
 app.post('/api/forgot-password', async (req, res) => {
     const { email } = req.body;
     
@@ -259,7 +242,7 @@ app.post('/api/forgot-password', async (req, res) => {
     }
 });
 
-// 5. Verify OTP
+// 4. Verify OTP
 app.post('/api/verify-otp', (req, res) => {
     const { email, otp } = req.body;
     
@@ -300,7 +283,7 @@ app.post('/api/verify-otp', (req, res) => {
     }
 });
 
-// 6. Reset Password
+// 5. Reset Password
 app.post('/api/reset-password', (req, res) => {
     const { email, newPassword } = req.body;
     
@@ -323,7 +306,7 @@ app.post('/api/reset-password', (req, res) => {
     });
 });
 
-// 7. Serve halaman
+// 6. Serve halaman
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -336,7 +319,7 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'register.html'));
 });
 
-// 8. Health check
+// 7. Health check
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
@@ -352,7 +335,7 @@ app.listen(PORT, () => {
     ║     🚀 Arya Store Server Running       ║
     ╠════════════════════════════════════════╣
     ║  URL: http://localhost:${PORT}          ║
-    ║  SMTP: ${EMAIL_USER !== 'emailanda@gmail.com' ? '✅ Configured' : '⚠️  Ganti EMAIL_USER dulu!'}
+    ║  SMTP: ✅ Configured (${EMAIL_USER})    ║
     ║  Users: ${users.length} user terdaftar    ║
     ╚════════════════════════════════════════╝
     `);
@@ -361,6 +344,10 @@ app.listen(PORT, () => {
     users.forEach(u => {
         console.log(`   - ${u.username} (${u.email || u.phone}) / ${u.password}`);
     });
-    console.log('\n💡 Fitur OTP sudah aktif!');
-    console.log('   Klik "Lupa Kata Sandi" untuk mencoba reset password via OTP email\n');
+    console.log('\n💡 Fitur Reset Password dengan Popup:');
+    console.log('   1. Klik "Lupa Kata Sandi"');
+    console.log('   2. Masukkan email (khoirull1841@gmail.com)');
+    console.log('   3. Cek email, dapat OTP');
+    console.log('   4. Masukkan OTP di popup');
+    console.log('   5. Buat password baru\n');
 });

@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Masuk - Arya Store</title>
-    <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -400,7 +398,7 @@
             display: block;
         }
 
-        /* MODAL OTP STYLES */
+        /* MODAL STYLES */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -550,12 +548,18 @@
             font-weight: 500;
         }
 
-        .otp-error {
+        .modal-error {
             color: #c33;
             font-size: 13px;
             text-align: center;
             margin-top: 10px;
             display: none;
+        }
+
+        /* Forgot Password Modal (Step 1 - Input Email) */
+        .forgot-modal-input {
+            letter-spacing: normal;
+            text-align: left;
         }
 
         @media (max-width: 480px) {
@@ -616,7 +620,7 @@
                     </label>
                 </div>
                 <div class="forgot-wrapper">
-                    <a href="#" onclick="showForgotPassword()">
+                    <a href="#" onclick="showForgotPasswordModal()">
                         <i class="fas fa-question-circle"></i> Lupa Kata Sandi?
                     </a>
                 </div>
@@ -647,10 +651,34 @@
         </div>
     </div>
 
-    <!-- MODAL OTP (Step 1: Input OTP) -->
+    <!-- MODAL 1: FORGOT PASSWORD (Input Email) -->
+    <div id="forgotModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>🔐 Lupa Password?</h3>
+            <p>Masukkan email terdaftar Anda, kami akan mengirimkan kode OTP</p>
+            
+            <div class="modal-input-wrapper">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="forgotEmail" class="modal-input forgot-modal-input" placeholder="Email Anda" autocomplete="off">
+            </div>
+            
+            <div id="forgotError" class="modal-error">
+                <i class="fas fa-exclamation-circle"></i> <span id="forgotErrorMessage"></span>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeForgotModal()">Batal</button>
+                <button class="modal-btn modal-btn-primary" onclick="sendForgotOtp()" id="sendOtpBtn">
+                    Kirim OTP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: OTP VERIFICATION -->
     <div id="otpModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>🔐 Verifikasi OTP</h3>
+            <h3>📧 Verifikasi OTP</h3>
             <p>Kode OTP telah dikirim ke <strong id="otpEmailDisplay"></strong></p>
             
             <div class="modal-input-wrapper">
@@ -658,7 +686,7 @@
                 <input type="text" id="otpCode" class="modal-input" placeholder="000000" maxlength="6" autocomplete="off">
             </div>
             
-            <div id="otpError" class="otp-error">
+            <div id="otpError" class="modal-error">
                 <i class="fas fa-exclamation-circle"></i> <span id="otpErrorMessage"></span>
             </div>
             
@@ -676,7 +704,7 @@
         </div>
     </div>
 
-    <!-- MODAL RESET PASSWORD (Step 2: Set Password Baru) -->
+    <!-- MODAL 3: RESET PASSWORD -->
     <div id="resetPasswordModal" class="modal-overlay">
         <div class="modal-content">
             <h3>✨ Reset Password</h3>
@@ -684,15 +712,15 @@
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="newPassword" class="modal-input" placeholder="Password baru" style="letter-spacing: normal;">
+                <input type="password" id="newPassword" class="modal-input forgot-modal-input" placeholder="Password baru">
             </div>
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="confirmNewPassword" class="modal-input" placeholder="Konfirmasi password baru" style="letter-spacing: normal;">
+                <input type="password" id="confirmNewPassword" class="modal-input forgot-modal-input" placeholder="Konfirmasi password baru">
             </div>
             
-            <div id="resetError" class="otp-error">
+            <div id="resetError" class="modal-error">
                 <i class="fas fa-exclamation-circle"></i> <span id="resetErrorMessage"></span>
             </div>
             
@@ -706,7 +734,7 @@
     </div>
 
     <script>
-        // Toggle Password Visibility
+        // Toggle Password
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
 
@@ -717,22 +745,16 @@
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Variables
         let loginAttempts = 0;
         const MAX_ATTEMPTS = 5;
         let isLocked = false;
         let lockTimer = null;
         let currentResetEmail = '';
-        let resetToken = '';
         let otpTimerInterval = null;
 
-        // Check URL params
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('registered') === 'true') {
             showAlert('Pendaftaran berhasil! Silakan masuk.', 'success');
-        }
-        if (urlParams.get('reset') === 'sent') {
-            showAlert('Link reset telah dikirim ke email Anda!', 'success');
         }
 
         document.getElementById('identifier').focus();
@@ -842,43 +864,36 @@
             setTimeout(() => alert.style.display = 'none', 4000);
         }
 
-        // ==================== FORGOT PASSWORD FUNCTIONS ====================
+        // ==================== FORGOT PASSWORD MODAL FLOW ====================
         
-        function showForgotPassword() {
-            const identifier = document.getElementById('identifier').value;
-            if (!identifier) {
-                showAlert('Masukkan email/username/HP terlebih dahulu!', 'error');
+        function showForgotPasswordModal() {
+            document.getElementById('forgotModal').style.display = 'flex';
+            document.getElementById('forgotEmail').value = '';
+            document.getElementById('forgotError').style.display = 'none';
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').style.display = 'none';
+        }
+
+        async function sendForgotOtp() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            
+            if (!email) {
+                document.getElementById('forgotErrorMessage').innerText = 'Masukkan email Anda!';
+                document.getElementById('forgotError').style.display = 'block';
                 return;
             }
             
-            // Cek user dulu
-            fetch('/api/check-user', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ identifier })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.exists && data.user.email) {
-                    currentResetEmail = data.user.email;
-                    sendOtpToEmail(currentResetEmail);
-                } else if (data.exists && !data.user.email) {
-                    showAlert('Akun Anda tidak memiliki email. Hubungi admin.', 'error');
-                } else {
-                    showAlert('Akun tidak ditemukan!', 'error');
-                }
-            })
-            .catch(err => {
-                showAlert('Gagal memeriksa akun. Coba lagi.', 'error');
-            });
-        }
-
-        async function sendOtpToEmail(email) {
-            console.log('Sending OTP to:', email);
+            if (!email.includes('@') || !email.includes('.')) {
+                document.getElementById('forgotErrorMessage').innerText = 'Format email tidak valid!';
+                document.getElementById('forgotError').style.display = 'block';
+                return;
+            }
             
-            const btn = document.getElementById('loginBtn');
+            const btn = document.getElementById('sendOtpBtn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim OTP...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
             btn.disabled = true;
             
             try {
@@ -891,19 +906,24 @@
                 const data = await res.json();
                 
                 if (data.success) {
+                    currentResetEmail = email;
+                    closeForgotModal();
+                    
                     // Tampilkan modal OTP
                     document.getElementById('otpEmailDisplay').innerText = email;
                     document.getElementById('otpModal').style.display = 'flex';
                     document.getElementById('otpCode').value = '';
                     document.getElementById('otpError').style.display = 'none';
-                    startOtpTimer(600); // 10 menit = 600 detik
+                    startOtpTimer(600);
                     
                     showAlert('Kode OTP telah dikirim ke email Anda!', 'success');
                 } else {
-                    showAlert(data.message || 'Gagal mengirim OTP', 'error');
+                    document.getElementById('forgotErrorMessage').innerText = data.message;
+                    document.getElementById('forgotError').style.display = 'block';
                 }
             } catch (error) {
-                showAlert('Gagal mengirim OTP. Coba lagi.', 'error');
+                document.getElementById('forgotErrorMessage').innerText = 'Gagal mengirim OTP. Coba lagi.';
+                document.getElementById('forgotError').style.display = 'block';
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -961,7 +981,6 @@
                 const data = await res.json();
                 
                 if (data.success) {
-                    resetToken = data.resetToken;
                     closeOtpModal();
                     showResetPasswordModal();
                 } else {
@@ -980,10 +999,26 @@
         async function resendOtp() {
             const timerElement = document.getElementById('otpTimer');
             if (timerElement.innerText.includes('kadaluarsa') || timerElement.innerText.includes('00:00')) {
-                await sendOtpToEmail(currentResetEmail);
+                await sendForgotOtpDirect(currentResetEmail);
                 startOtpTimer(600);
             } else {
                 showAlert('Tunggu sampai kode kadaluarsa sebelum meminta ulang!', 'warning');
+            }
+        }
+        
+        async function sendForgotOtpDirect(email) {
+            try {
+                const res = await fetch('/api/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showAlert('Kode OTP baru telah dikirim!', 'success');
+                }
+            } catch (error) {
+                showAlert('Gagal mengirim ulang OTP', 'error');
             }
         }
 
@@ -1002,7 +1037,6 @@
         function closeResetModal() {
             document.getElementById('resetPasswordModal').style.display = 'none';
             currentResetEmail = '';
-            resetToken = '';
         }
 
         async function resetPassword() {
@@ -1038,8 +1072,6 @@
                 if (data.success) {
                     showAlert('Password berhasil direset! Silakan login dengan password baru.', 'success');
                     closeResetModal();
-                    
-                    // Clear password field
                     document.getElementById('password').value = '';
                 } else {
                     document.getElementById('resetErrorMessage').innerText = data.message;
@@ -1059,6 +1091,10 @@
             if (e.key === 'Enter') login();
         });
         
+        document.getElementById('forgotEmail').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendForgotOtp();
+        });
+        
         document.getElementById('otpCode').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') verifyOtp();
         });
@@ -1071,15 +1107,15 @@
             if (e.key === 'Enter') resetPassword();
         });
 
-        // Auto format OTP input
         document.getElementById('otpCode').addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
         });
         
-        // Close modals when clicking outside
         window.onclick = function(event) {
+            const forgotModal = document.getElementById('forgotModal');
             const otpModal = document.getElementById('otpModal');
             const resetModal = document.getElementById('resetPasswordModal');
+            if (event.target === forgotModal) closeForgotModal();
             if (event.target === otpModal) closeOtpModal();
             if (event.target === resetModal) closeResetModal();
         }
