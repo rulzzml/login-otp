@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Masuk - Arya Store</title>
+    <!-- Google Fonts - Poppins dengan berbagai weight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .animated-bg span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: move 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .animated-bg span:nth-child(1) {
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            animation-delay: 0s;
+        }
+        .animated-bg span:nth-child(2) {
+            left: 20%;
+            width: 30px;
+            height: 30px;
+            animation-delay: 2s;
+            animation-duration: 17s;
+        }
+        .animated-bg span:nth-child(3) {
+            left: 40%;
+            width: 50px;
+            height: 50px;
+            animation-delay: 4s;
+            animation-duration: 20s;
+        }
+        .animated-bg span:nth-child(4) {
+            left: 60%;
+            width: 100px;
+            height: 100px;
+            animation-delay: 0s;
+            animation-duration: 30s;
+        }
+        .animated-bg span:nth-child(5) {
+            left: 80%;
+            width: 40px;
+            height: 40px;
+            animation-delay: 3s;
+            animation-duration: 22s;
+        }
+        .animated-bg span:nth-child(6) {
+            left: 90%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 1s;
+            animation-duration: 18s;
+        }
+
+        @keyframes move {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 20px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .logo-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i:first-child {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 18px 18px 18px 52px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 400;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-wrapper input::placeholder {
+            font-weight: 300;
+            color: #999;
+        }
+
+        /* Toggle password button */
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: #667eea;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 25px 0;
+            width: 100%;
+        }
+
+        .remember-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+            margin: 0;
+        }
+
+        .checkbox-container span {
+            font-size: 14px;
+            font-weight: 500;
+            color: #444;
+            line-height: 1;
+        }
+
+        .forgot-wrapper a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+        }
+
+        .forgot-wrapper a:hover {
+            color: #764ba2;
+            gap: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0;
+            color: #999;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+        }
+
+        .register-link {
+            text-align: center;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .register-link a:hover {
+            color: #764ba2;
+            gap: 12px;
+        }
+
+        .alert {
+            background: linear-gradient(145deg, #fee, #ffd5d5);
+            color: #c33;
+            padding: 16px 20px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            display: none;
+            border-left: 4px solid #c33;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background: linear-gradient(145deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border-left-color: #28a745;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding-top: 24px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .feature-item {
+            text-align: center;
+        }
+
+        .feature-item i {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .feature-item span {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .modal-content h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .modal-input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .modal-input-wrapper i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 22px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 18px 18px 18px 55px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .attempt-counter {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #999;
+            display: none;
+        }
+
+        .attempt-counter.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 32px 24px;
+            }
+            .action-row {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <h1>Arya Store</h1>
+            <p>Selamat datang kembali! Silakan masuk ke akun Anda</p>
+        </div>
+
+        <div id="alert" class="alert">
+            <i class="fas fa-exclamation-circle"></i> <span id="alertMessage"></span>
+        </div>
+
+        <form onsubmit="event.preventDefault(); login();">
+            <div class="input-group">
+                <label>Email atau Nomor HP</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="identifier" placeholder="Masukkan email atau nomor HP" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Kata Sandi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Masukkan kata sandi" required>
+                    <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <div class="remember-wrapper">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>Ingat saya</span>
+                    </label>
+                </div>
+                <div class="forgot-wrapper">
+                    <a href="#" onclick="showForgotPassword()">
+                        <i class="fas fa-question-circle"></i> Lupa Kata Sandi?
+                    </a>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn">
+                <span>Masuk</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div id="attemptCounter" class="attempt-counter">
+            <i class="fas fa-shield-alt"></i> <span id="attemptCount">5</span> percobaan tersisa
+        </div>
+
+        <div class="divider">
+            <span class="divider-line"></span><span>atau</span><span class="divider-line"></span>
+        </div>
+
+        <div class="register-link">
+            <a href="/register"><i class="fas fa-user-plus"></i> Buat Akun Baru</a>
+        </div>
+
+        <div class="features">
+            <div class="feature-item"><i class="fas fa-shield-alt"></i><span>Aman</span></div>
+            <div class="feature-item"><i class="fas fa-bolt"></i><span>Cepat</span></div>
+            <div class="feature-item"><i class="fas fa-headset"></i><span>24/7 Support</span></div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotModal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(145deg, #667eea20, #764ba220); border-radius: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <i class="fas fa-key" style="font-size: 35px; color: #667eea;"></i>
+                </div>
+                <h3>Reset Kata Sandi</h3>
+                <p>Masukkan email Anda untuk mereset kata sandi</p>
+            </div>
+
+            <div class="modal-input-wrapper">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="resetEmail" class="modal-input" placeholder="Email Anda">
+            </div>
+
+            <div id="resetAlert" class="alert" style="margin-bottom: 20px; display: none;"></div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="hideForgotPassword()">Batal</button>
+                <button class="modal-btn modal-btn-primary" onclick="sendResetLink()" id="resetBtn">
+                    <span>Kirim Link Reset</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Password Visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 5;
+        let isLocked = false;
+        let lockTimer = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('registered') === 'true') {
+            showAlert('Pendaftaran berhasil! Silakan masuk.', 'success');
+        }
+        if (urlParams.get('reset') === 'sent') {
+            showAlert('Link reset telah dikirim ke email Anda!', 'success');
+        }
+
+        document.getElementById('identifier').focus();
+
+        const savedIdentifier = localStorage.getItem('rememberIdentifier');
+        if (savedIdentifier) {
+            document.getElementById('identifier').value = savedIdentifier;
+            document.getElementById('rememberMe').checked = true;
+        }
+
+        function updateAttemptCounter() {
+            const counter = document.getElementById('attemptCounter');
+            const countSpan = document.getElementById('attemptCount');
+            if (loginAttempts > 0) {
+                countSpan.innerText = MAX_ATTEMPTS - loginAttempts;
+                counter.classList.add('show');
+            } else {
+                counter.classList.remove('show');
+            }
+        }
+
+        function lockLogin() {
+            isLocked = true;
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            showAlert('Terlalu banyak percobaan. Coba lagi dalam 30 detik.', 'error');
+            
+            if (lockTimer) clearInterval(lockTimer);
+            let seconds = 30;
+            lockTimer = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(lockTimer);
+                    isLocked = false;
+                    loginAttempts = 0;
+                    updateAttemptCounter();
+                    btn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        async function login() {
+            if (isLocked) {
+                showAlert('Terlalu banyak percobaan. Silakan tunggu.', 'error');
+                return;
+            }
+
+            const identifier = document.getElementById('identifier').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            if (!identifier || !password) {
+                showAlert('Harap isi semua field!', 'error');
+                return;
+            }
+
+            if (rememberMe) {
+                localStorage.setItem('rememberIdentifier', identifier);
+            } else {
+                localStorage.removeItem('rememberIdentifier');
+            }
+
+            const btn = document.getElementById('loginBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, password, rememberMe })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    loginAttempts = 0;
+                    updateAttemptCounter();
+                    showAlert('Login berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        if (data.redirect) window.location.href = data.redirect;
+                        else if (data.user?.role === 'admin') window.location.href = '/admin';
+                        else window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    loginAttempts++;
+                    updateAttemptCounter();
+                    if (loginAttempts >= MAX_ATTEMPTS) lockLogin();
+                    showAlert(data.error || 'Email/Password salah', 'error');
+                    btn.innerHTML = originalText;
+                    if (!isLocked) btn.disabled = false;
+                }
+            } catch (error) {
+                showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function showAlert(msg, type = 'error') {
+            const alert = document.getElementById('alert');
+            document.getElementById('alertMessage').innerText = msg;
+            alert.className = 'alert';
+            if (type === 'success') alert.classList.add('success');
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 4000);
+        }
+
+        function showForgotPassword() {
+            document.getElementById('forgotModal').style.display = 'flex';
+            document.getElementById('resetAlert').style.display = 'none';
+            document.getElementById('resetEmail').value = '';
+        }
+
+        function hideForgotPassword() {
+            document.getElementById('forgotModal').style.display = 'none';
+        }
+
+        async function sendResetLink() {
+            const email = document.getElementById('resetEmail').value;
+            const resetAlert = document.getElementById('resetAlert');
+            const btn = document.getElementById('resetBtn');
+            
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                resetAlert.className = 'alert';
+                resetAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email tidak valid!';
+                resetAlert.style.display = 'block';
+                return;
+            }
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/forgot-password', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ email }) 
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    resetAlert.className = 'alert success';
+                    resetAlert.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                    resetAlert.style.display = 'block';
+                    document.getElementById('resetEmail').value = '';
+                    setTimeout(hideForgotPassword, 3000);
+                } else {
+                    resetAlert.className = 'alert';
+                    resetAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+                    resetAlert.style.display = 'block';
+                }
+            } catch (error) {
+                resetAlert.className = 'alert';
+                resetAlert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Gagal memproses permintaan.';
+                resetAlert.style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('forgotModal')) hideForgotPassword();
+        }
+    </script>
+</body>
+</html>
