@@ -37,10 +37,10 @@ const users = [
     },
     {
         id: 3,
-        username: 'testuser',
-        email: 'test@aryastore.com',
-        password: 'test123',
-        name: 'Test User',
+        username: 'rulzz',
+        email: 'khoirull1841@gmail.com',
+        password: 'rulzz123',
+        name: 'Rulzz Test',
         phone: '081255555555',
         role: 'user',
         createdAt: '2024-01-01T00:00:00.000Z'
