@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Masuk - Arya Store</title>
+    <title>Masuk - Rulzz Official</title>
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +11,22 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --bg-1: #0a1129;
+            --bg-2: #0f1a3d;
+            --card: rgba(30, 58, 138, 0.15);
+            --muted: #93c5fd;
+            --accent-from: #2563eb;
+            --accent-to: #3b82f6;
+            --glass-border: rgba(59, 130, 246, 0.15);
+            --text: #e0f2fe;
+            --shadow: rgba(2, 8, 30, 0.6);
+            --transition: 240ms cubic-bezier(.2,.9,.2,1);
+            --accent-secondary: #a855f7;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -19,7 +35,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0a2540 0%, #1a4d6b 50%, #2c6e8f 100%);
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -28,30 +44,45 @@
             position: relative;
         }
 
-        /* Subtle wave effect */
-        .wave-bg {
+        /* Animated background effect */
+        .bg-animation {
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            overflow: hidden;
             z-index: 0;
-            opacity: 0.1;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,181.3C672,181,768,203,864,213.3C960,224,1056,224,1152,208C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
-            background-size: cover;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.97);
+            background: var(--card);
+            backdrop-filter: blur(12px);
             border-radius: 32px;
             padding: 44px 40px;
             width: 100%;
             max-width: 460px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 45px var(--shadow);
             position: relative;
             z-index: 1;
             animation: fadeInUp 0.6s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--glass-border);
         }
 
         @keyframes fadeInUp {
@@ -71,32 +102,34 @@
         }
 
         .logo-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1e5a7a, #0a3b52);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 90px;
+            height: 90px;
             margin: 0 auto 20px;
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--card);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 20px -5px var(--shadow);
         }
 
-        .logo-icon i {
-            font-size: 36px;
-            color: white;
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .logo h1 {
             font-size: 28px;
             font-weight: 700;
-            color: #1e5a7a;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
             letter-spacing: -0.5px;
         }
 
         .logo p {
-            color: #6c757d;
+            color: var(--muted);
             font-size: 14px;
             font-weight: 400;
         }
@@ -109,10 +142,9 @@
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: 600;
+            color: var(--text);
+            font-weight: 500;
             font-size: 13px;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
@@ -125,32 +157,34 @@
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9aa9b9;
+            color: var(--muted);
             font-size: 18px;
             z-index: 10;
-            transition: color 0.2s;
+            transition: color var(--transition);
         }
 
         .input-wrapper input {
             width: 100%;
             padding: 16px 16px 16px 48px;
-            border: 1.5px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             font-size: 15px;
             font-weight: 400;
-            background: white;
-            transition: all 0.2s;
+            color: var(--text);
+            transition: all var(--transition);
         }
 
         .input-wrapper input:focus {
             outline: none;
-            border-color: #2c6e8f;
-            box-shadow: 0 0 0 3px rgba(44, 110, 143, 0.1);
+            border-color: var(--accent-from);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
         }
 
         .input-wrapper input::placeholder {
             font-weight: 400;
-            color: #cbd5e1;
+            color: rgba(147, 197, 253, 0.5);
         }
 
         .toggle-password {
@@ -159,14 +193,14 @@
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #9aa9b9;
+            color: var(--muted);
             font-size: 18px;
-            transition: color 0.2s;
+            transition: color var(--transition);
             z-index: 10;
         }
 
         .toggle-password:hover {
-            color: #2c6e8f;
+            color: var(--accent-from);
         }
 
         .action-row {
@@ -193,46 +227,46 @@
             width: 16px;
             height: 16px;
             cursor: pointer;
-            accent-color: #2c6e8f;
+            accent-color: var(--accent-from);
             margin: 0;
         }
 
         .checkbox-container span {
             font-size: 13px;
             font-weight: 500;
-            color: #4a5568;
+            color: var(--text);
             line-height: 1;
         }
 
         .forgot-wrapper a {
-            color: #2c6e8f;
+            color: var(--muted);
             text-decoration: none;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all var(--transition);
             line-height: 1;
         }
 
         .forgot-wrapper a:hover {
-            color: #1e5a7a;
+            color: var(--accent-from);
             gap: 8px;
         }
 
         button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #1e5a7a, #0f3d55);
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
             color: white;
             border: none;
             border-radius: 16px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -240,9 +274,8 @@
         }
 
         button:hover:not(:disabled) {
-            background: linear-gradient(135deg, #236e94, #124a66);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px -5px rgba(30, 90, 122, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
         }
 
         button:disabled {
@@ -264,7 +297,7 @@
             align-items: center;
             gap: 15px;
             margin: 28px 0;
-            color: #cbd5e1;
+            color: var(--muted);
             font-size: 13px;
             font-weight: 400;
         }
@@ -272,7 +305,7 @@
         .divider-line {
             flex: 1;
             height: 1px;
-            background: #e2e8f0;
+            background: var(--glass-border);
         }
 
         .register-link {
@@ -280,38 +313,38 @@
         }
 
         .register-link a {
-            color: #2c6e8f;
+            color: var(--muted);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 14px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
+            transition: all var(--transition);
         }
 
         .register-link a:hover {
-            color: #1e5a7a;
+            color: var(--accent-from);
             gap: 12px;
         }
 
         .alert {
-            background: #fef2f2;
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
             padding: 14px 18px;
             border-radius: 16px;
             margin-bottom: 24px;
             text-align: center;
             display: none;
-            border-left: 4px solid #dc2626;
+            border-left: 3px solid var(--error);
             font-size: 13px;
             font-weight: 500;
         }
 
         .alert.success {
-            background: #ecfdf5;
-            color: #059669;
-            border-left-color: #059669;
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border-left-color: var(--success);
         }
 
         .features {
@@ -320,7 +353,7 @@
             gap: 28px;
             margin-top: 28px;
             padding-top: 24px;
-            border-top: 1px solid #edf2f7;
+            border-top: 1px solid var(--glass-border);
         }
 
         .feature-item {
@@ -328,14 +361,14 @@
         }
 
         .feature-item i {
-            color: #2c6e8f;
+            color: var(--muted);
             font-size: 18px;
             margin-bottom: 6px;
         }
 
         .feature-item span {
             display: block;
-            color: #64748b;
+            color: var(--muted);
             font-size: 11px;
             font-weight: 500;
         }
@@ -345,7 +378,7 @@
             margin-top: 12px;
             font-size: 11px;
             font-weight: 400;
-            color: #94a3b8;
+            color: var(--muted);
             display: none;
         }
 
@@ -361,8 +394,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
+            background: rgba(10, 17, 41, 0.8);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -376,11 +409,12 @@
         }
 
         .modal-content {
-            background: white;
+            background: linear-gradient(135deg, #0f1a3d, #0a1129);
             border-radius: 32px;
             padding: 36px 32px;
             width: 100%;
             max-width: 400px;
+            border: 1px solid var(--glass-border);
             animation: slideUp 0.3s ease;
         }
 
@@ -399,12 +433,12 @@
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: #1e293b;
+            color: var(--text);
             text-align: center;
         }
 
         .modal-content p {
-            color: #64748b;
+            color: var(--muted);
             margin-bottom: 24px;
             text-align: center;
             font-size: 14px;
@@ -421,17 +455,19 @@
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #2c6e8f;
+            color: var(--muted);
             font-size: 18px;
         }
 
         .modal-input {
             width: 100%;
             padding: 14px 16px 14px 48px;
-            border: 1.5px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             font-size: 16px;
             font-weight: 500;
+            color: var(--text);
             text-align: center;
             letter-spacing: 4px;
             font-family: monospace;
@@ -439,8 +475,8 @@
 
         .modal-input:focus {
             outline: none;
-            border-color: #2c6e8f;
-            box-shadow: 0 0 0 3px rgba(44, 110, 143, 0.1);
+            border-color: var(--accent-from);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
         }
 
         .modal-buttons {
@@ -457,25 +493,27 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all var(--transition);
         }
 
         .modal-btn-primary {
-            background: #1e5a7a;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
             color: white;
         }
 
         .modal-btn-primary:hover {
-            background: #124a66;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px -5px rgba(37, 99, 235, 0.4);
         }
 
         .modal-btn-secondary {
-            background: #f1f5f9;
-            color: #334155;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
         }
 
         .modal-btn-secondary:hover {
-            background: #e2e8f0;
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .resend-link {
@@ -485,26 +523,26 @@
         }
 
         .resend-link a {
-            color: #2c6e8f;
+            color: var(--muted);
             text-decoration: none;
             cursor: pointer;
             font-weight: 500;
         }
 
         .resend-link a:hover {
-            text-decoration: underline;
+            color: var(--accent-from);
         }
 
         .timer {
             text-align: center;
             margin-top: 12px;
             font-size: 12px;
-            color: #e67e22;
+            color: var(--accent-secondary);
             font-weight: 500;
         }
 
         .modal-error {
-            color: #dc2626;
+            color: var(--error);
             font-size: 12px;
             text-align: center;
             margin-top: 8px;
@@ -530,15 +568,15 @@
     </style>
 </head>
 <body>
-    <div class="wave-bg"></div>
+    <div class="bg-animation"></div>
 
     <div class="container">
         <div class="logo">
             <div class="logo-icon">
-                <i class="fas fa-store"></i>
+                <img src="https://i.ibb.co.com/60ZFz4Jg/IMG-20250915-WA0031.jpg" alt="Rulzz Official Logo">
             </div>
-            <h1>Arya Store</h1>
-            <p>Selamat datang kembali</p>
+            <h1>Rulzz Official</h1>
+            <p>Selamat datang kembali! Silakan masuk ke akun Anda</p>
         </div>
 
         <div id="alert" class="alert">
@@ -691,7 +729,7 @@
         <div class="modal-content">
             <h3><i class="fas fa-envelope" style="margin-right: 8px;"></i> Verifikasi Email</h3>
             <p>Akun Anda belum diverifikasi. Silakan verifikasi email Anda terlebih dahulu.</p>
-            <p id="verificationEmailDisplay" style="font-weight: 600; color: #1e5a7a; margin-bottom: 20px; font-size: 14px;"></p>
+            <p id="verificationEmailDisplay" style="font-weight: 600; color: var(--accent-from); margin-bottom: 20px; font-size: 14px;"></p>
             
             <div class="modal-buttons">
                 <button class="modal-btn modal-btn-secondary" onclick="closeVerificationModal()">Nanti</button>
@@ -926,14 +964,14 @@
                 if (remaining <= 0) {
                     clearInterval(otpTimerInterval);
                     timerElement.innerHTML = '<i class="fas fa-hourglass-end"></i> Kode sudah kadaluarsa. Kirim ulang!';
-                    timerElement.style.color = '#dc2626';
+                    timerElement.style.color = '#ef4444';
                     resendLink.style.pointerEvents = 'auto';
                     resendLink.style.opacity = '1';
                 } else {
                     const minutes = Math.floor(remaining / 60);
                     const secs = remaining % 60;
                     timerElement.innerHTML = `<i class="fas fa-clock"></i> Kode berlaku ${minutes}:${secs.toString().padStart(2, '0')}`;
-                    timerElement.style.color = '#e67e22';
+                    timerElement.style.color = '#a855f7';
                     resendLink.style.pointerEvents = 'none';
                     resendLink.style.opacity = '0.5';
                     remaining--;
@@ -968,7 +1006,6 @@
                     closeOtpModal();
                     showResetPasswordModal();
                 } else {
-                    // Ubah pesan error jadi "Kode OTP salah"
                     document.getElementById('otpErrorMessage').innerText = 'Kode OTP salah. Silakan coba lagi.';
                     document.getElementById('otpError').style.display = 'block';
                 }
@@ -1097,14 +1134,14 @@
                 if (data.success) {
                     document.getElementById('verifErrorMessage').innerText = data.message;
                     document.getElementById('verifError').style.display = 'block';
-                    document.getElementById('verifError').style.color = '#059669';
+                    document.getElementById('verifError').style.color = '#22c55e';
                     setTimeout(() => {
                         closeVerificationModal();
                     }, 3000);
                 } else {
                     document.getElementById('verifErrorMessage').innerText = data.message;
                     document.getElementById('verifError').style.display = 'block';
-                    document.getElementById('verifError').style.color = '#dc2626';
+                    document.getElementById('verifError').style.color = '#ef4444';
                 }
             } catch (error) {
                 document.getElementById('verifErrorMessage').innerText = 'Gagal mengirim ulang verifikasi.';
