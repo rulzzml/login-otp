@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ==================== KONFIGURASI MONGODB ====================
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://rulzzofficial:Rulzz0411@login-otp.xtqqqnc.mongodb.net/';
-const DB_NAME = 'Login-OTP';
+const DB_NAME = 'login';
 
 let db;
 let usersCollection;
