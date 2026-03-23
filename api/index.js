@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ==================== KONFIGURASI MONGODB ====================
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://rulzz:YOUR_PASSWORD@login-otp.xtqqqnc.mongodb.net/login?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://rulzzofficial:Rulzz0411@login-otp.xtqqqnc.mongodb.net/login?retryWrites=true&w=majority';
 const DB_NAME = 'login';
 
 let cachedDb = null;
