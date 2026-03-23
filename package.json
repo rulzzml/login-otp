@@ -1,7 +1,7 @@
 {
   "name": "rulzz-official-auth",
   "version": "2.0.0",
-  "description": "Rulzz Official Authentication System with MongoDB, Google OAuth, and Email Verification",
+  "description": "Rulzz Official Authentication System",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -19,16 +19,5 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
-  },
-  "keywords": [
-    "authentication",
-    "otp",
-    "login",
-    "register",
-    "google-oauth",
-    "mongodb",
-    "express"
-  ],
-  "author": "Rulzz Official",
-  "license": "MIT"
+  }
 }

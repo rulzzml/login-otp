@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
@@ -8,28 +9,32 @@ const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 
 const app = express();
-const JWT_SECRET = 'rulzz_official_secret_2024';
+
+// ==================== KONFIGURASI ====================
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'rulzz_official_secret_2024';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://rulzzofficial:Rulzz0411@login-otp.xtqqqnc.mongodb.net/login?retryWrites=true&w=majority';
+const DB_NAME = 'login';
+const EMAIL_USER = process.env.EMAIL_USER || 'rulzzofficial628@gmail.com';
+const EMAIL_PASS = process.env.EMAIL_PASS || 'ivqh ufzo ebvv hsad';
+
+// Google OAuth Config (LENGKAP DENGAN CLIENT SECRET!)
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '990129659901-dm2fseiaq3vb8j54g49vlgf8tiu985oi.apps.googleusercontent.com';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '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';
+
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ==================== KONFIGURASI ====================
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://rulzzofficial:Rulzz0411@login-otp.xtqqqnc.mongodb.net/login?retryWrites=true&w=majority';
-const DB_NAME = 'login';
-const EMAIL_USER = 'rulzzofficial628@gmail.com';
-const EMAIL_PASS = 'ivqh ufzo ebvv hsad';
-
-// Google OAuth Config
-const GOOGLE_CLIENT_ID = '990129659901-53mi2ha6vvvaj6nt4trkv469ip9ij1e6.apps.googleusercontent.com';
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
-
+// Database variables
 let db;
 let usersCollection;
 let otpsCollection;
 
-// Koneksi Database
+// ==================== KONEKSI DATABASE ====================
 async function connectDB() {
     if (db) return { db, users: usersCollection, otps: otpsCollection };
     
@@ -119,7 +124,7 @@ async function connectDB() {
     return { db, users: usersCollection, otps: otpsCollection };
 }
 
-// SMTP Transporter
+// ==================== SMTP TRANSPORTER ====================
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -196,7 +201,15 @@ app.post('/api/auth/google', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user._id, email: user.email, name: user.name, username: user.username, picture: user.picture, role: user.role, verified: user.verified },
+            { 
+                id: user._id, 
+                email: user.email, 
+                name: user.name, 
+                username: user.username, 
+                picture: user.picture, 
+                role: user.role, 
+                verified: user.verified 
+            },
             JWT_SECRET,
             { expiresIn: '7d' }
         );
@@ -218,7 +231,7 @@ app.post('/api/auth/google', async (req, res) => {
         
     } catch (error) {
         console.error('❌ Google auth error:', error);
-        res.status(500).json({ success: false, message: 'Google login failed' });
+        res.status(500).json({ success: false, message: 'Google login failed: ' + error.message });
     }
 });
 
@@ -716,7 +729,6 @@ app.get('/dashboard', (req, res) => {
 });
 
 // ==================== START SERVER ====================
-const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`
