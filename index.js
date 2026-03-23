@@ -19,7 +19,7 @@ const EMAIL_USER = process.env.EMAIL_USER || 'rulzzofficial628@gmail.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || 'ivqh ufzo ebvv hsad';
 
 // Google OAuth Config (LENGKAP DENGAN CLIENT SECRET!)
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '990129659901-dm2fseiaq3vb8j54g49vlgf8tiu985oi.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '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';
 
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
