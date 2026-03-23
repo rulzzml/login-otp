@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Masuk - Arya Store</title>
+    <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -556,12 +558,6 @@
             display: none;
         }
 
-        /* Forgot Password Modal (Step 1 - Input Email) */
-        .forgot-modal-input {
-            letter-spacing: normal;
-            text-align: left;
-        }
-
         @media (max-width: 480px) {
             .container {
                 padding: 32px 24px;
@@ -659,7 +655,7 @@
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-envelope"></i>
-                <input type="email" id="forgotEmail" class="modal-input forgot-modal-input" placeholder="Email Anda" autocomplete="off">
+                <input type="email" id="forgotEmail" class="modal-input" placeholder="Email Anda" style="letter-spacing: normal;">
             </div>
             
             <div id="forgotError" class="modal-error">
@@ -675,7 +671,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: OTP VERIFICATION -->
+    <!-- MODAL 2: OTP VERIFICATION (for reset password) -->
     <div id="otpModal" class="modal-overlay">
         <div class="modal-content">
             <h3>📧 Verifikasi OTP</h3>
@@ -712,12 +708,12 @@
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="newPassword" class="modal-input forgot-modal-input" placeholder="Password baru">
+                <input type="password" id="newPassword" class="modal-input" placeholder="Password baru" style="letter-spacing: normal;">
             </div>
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="confirmNewPassword" class="modal-input forgot-modal-input" placeholder="Konfirmasi password baru">
+                <input type="password" id="confirmNewPassword" class="modal-input" placeholder="Konfirmasi password baru" style="letter-spacing: normal;">
             </div>
             
             <div id="resetError" class="modal-error">
@@ -729,6 +725,26 @@
                 <button class="modal-btn modal-btn-primary" onclick="resetPassword()" id="resetPwBtn">
                     Reset Password
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: VERIFICATION NEEDED (ketika login tapi belum verified) -->
+    <div id="verificationModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>⚠️ Verifikasi Email</h3>
+            <p>Akun Anda belum diverifikasi. Silakan verifikasi email Anda terlebih dahulu.</p>
+            <p id="verificationEmailDisplay" style="font-weight: bold; color: #667eea; margin-bottom: 20px;"></p>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeVerificationModal()">Nanti</button>
+                <button class="modal-btn modal-btn-primary" onclick="resendVerificationFromLogin()" id="resendVerifBtn">
+                    Kirim Ulang Verifikasi
+                </button>
+            </div>
+            
+            <div id="verifError" class="modal-error" style="margin-top: 15px;">
+                <i class="fas fa-exclamation-circle"></i> <span id="verifErrorMessage"></span>
             </div>
         </div>
     </div>
@@ -750,11 +766,15 @@
         let isLocked = false;
         let lockTimer = null;
         let currentResetEmail = '';
+        let currentUnverifiedEmail = '';
         let otpTimerInterval = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('registered') === 'true') {
-            showAlert('Pendaftaran berhasil! Silakan masuk.', 'success');
+            showAlert('Pendaftaran berhasil! Silakan verifikasi email Anda.', 'success');
+        }
+        if (urlParams.get('verified') === 'true') {
+            showAlert('Email berhasil diverifikasi! Silakan login.', 'success');
         }
 
         document.getElementById('identifier').focus();
@@ -841,6 +861,16 @@
                         else window.location.href = '/dashboard';
                     }, 1000);
                 } else {
+                    // Cek apakah error karena belum verified
+                    if (data.needVerification && data.email) {
+                        currentUnverifiedEmail = data.email;
+                        document.getElementById('verificationEmailDisplay').innerText = data.email;
+                        document.getElementById('verificationModal').style.display = 'flex';
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        return;
+                    }
+                    
                     loginAttempts++;
                     updateAttemptCounter();
                     if (loginAttempts >= MAX_ATTEMPTS) lockLogin();
@@ -864,7 +894,7 @@
             setTimeout(() => alert.style.display = 'none', 4000);
         }
 
-        // ==================== FORGOT PASSWORD MODAL FLOW ====================
+        // ==================== FORGOT PASSWORD FLOW ====================
         
         function showForgotPasswordModal() {
             document.getElementById('forgotModal').style.display = 'flex';
@@ -909,7 +939,6 @@
                     currentResetEmail = email;
                     closeForgotModal();
                     
-                    // Tampilkan modal OTP
                     document.getElementById('otpEmailDisplay').innerText = email;
                     document.getElementById('otpModal').style.display = 'flex';
                     document.getElementById('otpCode').value = '';
@@ -1086,6 +1115,51 @@
             }
         }
 
+        // ==================== VERIFICATION FLOW (dari login) ====================
+        
+        function closeVerificationModal() {
+            document.getElementById('verificationModal').style.display = 'none';
+            currentUnverifiedEmail = '';
+        }
+
+        async function resendVerificationFromLogin() {
+            if (!currentUnverifiedEmail) return;
+            
+            const btn = document.getElementById('resendVerifBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/resend-verification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentUnverifiedEmail })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('verifErrorMessage').innerText = data.message;
+                    document.getElementById('verifError').style.display = 'block';
+                    document.getElementById('verifError').style.color = '#28a745';
+                    setTimeout(() => {
+                        closeVerificationModal();
+                    }, 3000);
+                } else {
+                    document.getElementById('verifErrorMessage').innerText = data.message;
+                    document.getElementById('verifError').style.display = 'block';
+                    document.getElementById('verifError').style.color = '#c33';
+                }
+            } catch (error) {
+                document.getElementById('verifErrorMessage').innerText = 'Gagal mengirim ulang verifikasi.';
+                document.getElementById('verifError').style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
         // Enter key support
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') login();
@@ -1115,9 +1189,11 @@
             const forgotModal = document.getElementById('forgotModal');
             const otpModal = document.getElementById('otpModal');
             const resetModal = document.getElementById('resetPasswordModal');
+            const verifModal = document.getElementById('verificationModal');
             if (event.target === forgotModal) closeForgotModal();
             if (event.target === otpModal) closeOtpModal();
             if (event.target === resetModal) closeResetModal();
+            if (event.target === verifModal) closeVerificationModal();
         }
     </script>
 </body>
