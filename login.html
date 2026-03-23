@@ -19,7 +19,7 @@
         }
 
         body {
-            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0a2540 0%, #1a4d6b 50%, #2c6e8f 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -28,91 +28,41 @@
             position: relative;
         }
 
-        .animated-bg {
+        /* Subtle wave effect */
+        .wave-bg {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             z-index: 0;
-        }
-
-        .animated-bg span {
-            position: absolute;
-            display: block;
-            width: 20px;
-            height: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            animation: move 25s linear infinite;
-            bottom: -150px;
-        }
-
-        .animated-bg span:nth-child(1) {
-            left: 10%;
-            width: 80px;
-            height: 80px;
-            animation-delay: 0s;
-        }
-        .animated-bg span:nth-child(2) {
-            left: 20%;
-            width: 30px;
-            height: 30px;
-            animation-delay: 2s;
-            animation-duration: 17s;
-        }
-        .animated-bg span:nth-child(3) {
-            left: 40%;
-            width: 50px;
-            height: 50px;
-            animation-delay: 4s;
-            animation-duration: 20s;
-        }
-        .animated-bg span:nth-child(4) {
-            left: 60%;
-            width: 100px;
-            height: 100px;
-            animation-delay: 0s;
-            animation-duration: 30s;
-        }
-        .animated-bg span:nth-child(5) {
-            left: 80%;
-            width: 40px;
-            height: 40px;
-            animation-delay: 3s;
-            animation-duration: 22s;
-        }
-        .animated-bg span:nth-child(6) {
-            left: 90%;
-            width: 60px;
-            height: 60px;
-            animation-delay: 1s;
-            animation-duration: 18s;
-        }
-
-        @keyframes move {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+            opacity: 0.1;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,181.3C672,181,768,203,864,213.3C960,224,1056,224,1152,208C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
-            padding: 48px 40px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 32px;
+            padding: 44px 40px;
             width: 100%;
             max-width: 460px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             position: relative;
             z-index: 1;
-            animation: fadeInUp 0.8s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.6s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo {
@@ -121,33 +71,32 @@
         }
 
         .logo-icon {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(145deg, #667eea, #764ba2);
-            border-radius: 30px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e5a7a, #0a3b52);
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            box-shadow: 0 20px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
         }
 
         .logo-icon i {
-            font-size: 40px;
+            font-size: 36px;
             color: white;
         }
 
         .logo h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            background: linear-gradient(145deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #1e5a7a;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .logo p {
-            color: #666;
+            color: #6c757d;
             font-size: 14px;
             font-weight: 400;
         }
@@ -160,9 +109,11 @@
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            color: #444;
+            color: #2c3e50;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .input-wrapper {
@@ -171,57 +122,58 @@
 
         .input-wrapper i:first-child {
             position: absolute;
-            left: 18px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #667eea;
-            font-size: 20px;
+            color: #9aa9b9;
+            font-size: 18px;
             z-index: 10;
+            transition: color 0.2s;
         }
 
         .input-wrapper input {
             width: 100%;
-            padding: 18px 18px 18px 52px;
-            border: 2px solid #e0e0e0;
-            border-radius: 20px;
+            padding: 16px 16px 16px 48px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
             font-size: 15px;
             font-weight: 400;
             background: white;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .input-wrapper input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+            border-color: #2c6e8f;
+            box-shadow: 0 0 0 3px rgba(44, 110, 143, 0.1);
         }
 
         .input-wrapper input::placeholder {
-            font-weight: 300;
-            color: #999;
+            font-weight: 400;
+            color: #cbd5e1;
         }
 
         .toggle-password {
             position: absolute;
-            right: 18px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #999;
+            color: #9aa9b9;
             font-size: 18px;
-            transition: color 0.3s;
+            transition: color 0.2s;
             z-index: 10;
         }
 
         .toggle-password:hover {
-            color: #667eea;
+            color: #2c6e8f;
         }
 
         .action-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 0 25px 0;
+            margin: 20px 0 28px 0;
             width: 100%;
         }
 
@@ -238,49 +190,49 @@
         }
 
         .checkbox-container input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
-            accent-color: #667eea;
+            accent-color: #2c6e8f;
             margin: 0;
         }
 
         .checkbox-container span {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
-            color: #444;
+            color: #4a5568;
             line-height: 1;
         }
 
         .forgot-wrapper a {
-            color: #667eea;
+            color: #2c6e8f;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             line-height: 1;
         }
 
         .forgot-wrapper a:hover {
-            color: #764ba2;
+            color: #1e5a7a;
             gap: 8px;
         }
 
         button {
             width: 100%;
-            padding: 18px;
-            background: linear-gradient(145deg, #667eea, #764ba2);
+            padding: 16px;
+            background: linear-gradient(135deg, #1e5a7a, #0f3d55);
             color: white;
             border: none;
-            border-radius: 20px;
-            font-size: 18px;
+            border-radius: 16px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -288,12 +240,13 @@
         }
 
         button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #236e94, #124a66);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -5px rgba(30, 90, 122, 0.3);
         }
 
         button:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
@@ -310,16 +263,16 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            margin: 30px 0;
-            color: #999;
-            font-size: 14px;
+            margin: 28px 0;
+            color: #cbd5e1;
+            font-size: 13px;
             font-weight: 400;
         }
 
         .divider-line {
             flex: 1;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+            height: 1px;
+            background: #e2e8f0;
         }
 
         .register-link {
@@ -327,47 +280,47 @@
         }
 
         .register-link a {
-            color: #667eea;
+            color: #2c6e8f;
             text-decoration: none;
-            font-weight: 700;
-            font-size: 16px;
+            font-weight: 600;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .register-link a:hover {
-            color: #764ba2;
+            color: #1e5a7a;
             gap: 12px;
         }
 
         .alert {
-            background: linear-gradient(145deg, #fee, #ffd5d5);
-            color: #c33;
-            padding: 16px 20px;
-            border-radius: 20px;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 14px 18px;
+            border-radius: 16px;
             margin-bottom: 24px;
             text-align: center;
             display: none;
-            border-left: 4px solid #c33;
-            font-size: 14px;
+            border-left: 4px solid #dc2626;
+            font-size: 13px;
             font-weight: 500;
         }
 
         .alert.success {
-            background: linear-gradient(145deg, #d4edda, #c3e6cb);
-            color: #155724;
-            border-left-color: #28a745;
+            background: #ecfdf5;
+            color: #059669;
+            border-left-color: #059669;
         }
 
         .features {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
+            gap: 28px;
+            margin-top: 28px;
             padding-top: 24px;
-            border-top: 2px solid #f0f0f0;
+            border-top: 1px solid #edf2f7;
         }
 
         .feature-item {
@@ -375,24 +328,24 @@
         }
 
         .feature-item i {
-            color: #667eea;
-            font-size: 20px;
-            margin-bottom: 8px;
+            color: #2c6e8f;
+            font-size: 18px;
+            margin-bottom: 6px;
         }
 
         .feature-item span {
             display: block;
-            color: #666;
-            font-size: 12px;
+            color: #64748b;
+            font-size: 11px;
             font-weight: 500;
         }
 
         .attempt-counter {
             text-align: center;
-            margin-top: 10px;
-            font-size: 12px;
+            margin-top: 12px;
+            font-size: 11px;
             font-weight: 400;
-            color: #999;
+            color: #94a3b8;
             display: none;
         }
 
@@ -400,7 +353,7 @@
             display: block;
         }
 
-        /* MODAL STYLES */
+        /* Modal Styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -408,13 +361,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s ease;
         }
 
         @keyframes fadeIn {
@@ -424,18 +377,17 @@
 
         .modal-content {
             background: white;
-            border-radius: 40px;
-            padding: 40px;
+            border-radius: 32px;
+            padding: 36px 32px;
             width: 100%;
-            max-width: 420px;
-            animation: slideUp 0.4s ease;
-            position: relative;
+            max-width: 400px;
+            animation: slideUp 0.3s ease;
         }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -444,95 +396,96 @@
         }
 
         .modal-content h3 {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 10px;
-            color: #333;
+            margin-bottom: 8px;
+            color: #1e293b;
             text-align: center;
         }
 
         .modal-content p {
-            color: #666;
-            margin-bottom: 25px;
+            color: #64748b;
+            margin-bottom: 24px;
             text-align: center;
             font-size: 14px;
+            line-height: 1.5;
         }
 
         .modal-input-wrapper {
             position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
 
         .modal-input-wrapper i {
             position: absolute;
-            left: 18px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #667eea;
-            font-size: 22px;
+            color: #2c6e8f;
+            font-size: 18px;
         }
 
         .modal-input {
             width: 100%;
-            padding: 18px 18px 18px 55px;
-            border: 2px solid #e0e0e0;
-            border-radius: 20px;
-            font-size: 18px;
+            padding: 14px 16px 14px 48px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 16px;
             font-weight: 500;
             text-align: center;
-            letter-spacing: 8px;
+            letter-spacing: 4px;
             font-family: monospace;
         }
 
         .modal-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2c6e8f;
+            box-shadow: 0 0 0 3px rgba(44, 110, 143, 0.1);
         }
 
         .modal-buttons {
             display: flex;
             gap: 12px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .modal-btn {
             flex: 1;
-            padding: 16px;
+            padding: 14px;
             border: none;
-            border-radius: 20px;
+            border-radius: 16px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 15px;
-            transition: all 0.3s;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .modal-btn-primary {
-            background: linear-gradient(145deg, #667eea, #764ba2);
+            background: #1e5a7a;
             color: white;
         }
 
         .modal-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            background: #124a66;
         }
 
         .modal-btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+            background: #f1f5f9;
+            color: #334155;
         }
 
         .modal-btn-secondary:hover {
-            background: #e0e0e0;
+            background: #e2e8f0;
         }
 
         .resend-link {
             text-align: center;
             margin-top: 20px;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .resend-link a {
-            color: #667eea;
+            color: #2c6e8f;
             text-decoration: none;
             cursor: pointer;
             font-weight: 500;
@@ -544,18 +497,22 @@
 
         .timer {
             text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #f59e0b;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #e67e22;
             font-weight: 500;
         }
 
         .modal-error {
-            color: #c33;
-            font-size: 13px;
+            color: #dc2626;
+            font-size: 12px;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 8px;
             display: none;
+        }
+
+        .modal-error i {
+            margin-right: 4px;
         }
 
         @media (max-width: 480px) {
@@ -563,19 +520,17 @@
                 padding: 32px 24px;
             }
             .modal-content {
-                padding: 30px 24px;
+                padding: 28px 24px;
             }
             .modal-input {
-                font-size: 16px;
-                letter-spacing: 5px;
+                font-size: 14px;
+                letter-spacing: 3px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="animated-bg">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-    </div>
+    <div class="wave-bg"></div>
 
     <div class="container">
         <div class="logo">
@@ -583,7 +538,7 @@
                 <i class="fas fa-store"></i>
             </div>
             <h1>Arya Store</h1>
-            <p>Selamat datang kembali! Silakan masuk ke akun Anda</p>
+            <p>Selamat datang kembali</p>
         </div>
 
         <div id="alert" class="alert">
@@ -592,7 +547,7 @@
 
         <form onsubmit="event.preventDefault(); login();">
             <div class="input-group">
-                <label>Email / Username / Nomor HP</label>
+                <label>Email / Username / No. HP</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user"></i>
                     <input type="text" id="identifier" placeholder="Masukkan email, username, atau nomor HP" required>
@@ -633,7 +588,9 @@
         </div>
 
         <div class="divider">
-            <span class="divider-line"></span><span>atau</span><span class="divider-line"></span>
+            <span class="divider-line"></span>
+            <span>atau</span>
+            <span class="divider-line"></span>
         </div>
 
         <div class="register-link">
@@ -647,11 +604,11 @@
         </div>
     </div>
 
-    <!-- MODAL 1: FORGOT PASSWORD (Input Email) -->
+    <!-- Modal: Forgot Password -->
     <div id="forgotModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>🔐 Lupa Password?</h3>
-            <p>Masukkan email terdaftar Anda, kami akan mengirimkan kode OTP</p>
+            <h3><i class="fas fa-key" style="margin-right: 8px;"></i> Lupa Password</h3>
+            <p>Masukkan email terdaftar Anda, kami akan mengirimkan kode verifikasi</p>
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-envelope"></i>
@@ -665,20 +622,20 @@
             <div class="modal-buttons">
                 <button class="modal-btn modal-btn-secondary" onclick="closeForgotModal()">Batal</button>
                 <button class="modal-btn modal-btn-primary" onclick="sendForgotOtp()" id="sendOtpBtn">
-                    Kirim OTP
+                    Kirim Kode
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 2: OTP VERIFICATION (for reset password) -->
+    <!-- Modal: OTP Verification -->
     <div id="otpModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>📧 Verifikasi OTP</h3>
-            <p>Kode OTP telah dikirim ke <strong id="otpEmailDisplay"></strong></p>
+            <h3><i class="fas fa-shield-alt" style="margin-right: 8px;"></i> Verifikasi Kode</h3>
+            <p>Kode verifikasi telah dikirim ke <strong id="otpEmailDisplay"></strong></p>
             
             <div class="modal-input-wrapper">
-                <i class="fas fa-key"></i>
+                <i class="fas fa-qrcode"></i>
                 <input type="text" id="otpCode" class="modal-input" placeholder="000000" maxlength="6" autocomplete="off">
             </div>
             
@@ -700,20 +657,20 @@
         </div>
     </div>
 
-    <!-- MODAL 3: RESET PASSWORD -->
+    <!-- Modal: Reset Password -->
     <div id="resetPasswordModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>✨ Reset Password</h3>
-            <p>Buat password baru untuk akun Anda</p>
+            <h3><i class="fas fa-lock" style="margin-right: 8px;"></i> Reset Password</h3>
+            <p>Buat kata sandi baru untuk akun Anda</p>
             
             <div class="modal-input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="newPassword" class="modal-input" placeholder="Password baru" style="letter-spacing: normal;">
+                <input type="password" id="newPassword" class="modal-input" placeholder="Kata sandi baru" style="letter-spacing: normal;">
             </div>
             
             <div class="modal-input-wrapper">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="confirmNewPassword" class="modal-input" placeholder="Konfirmasi password baru" style="letter-spacing: normal;">
+                <i class="fas fa-check-circle"></i>
+                <input type="password" id="confirmNewPassword" class="modal-input" placeholder="Konfirmasi kata sandi" style="letter-spacing: normal;">
             </div>
             
             <div id="resetError" class="modal-error">
@@ -729,12 +686,12 @@
         </div>
     </div>
 
-    <!-- MODAL 4: VERIFICATION NEEDED (ketika login tapi belum verified) -->
+    <!-- Modal: Verification Needed -->
     <div id="verificationModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>⚠️ Verifikasi Email</h3>
+            <h3><i class="fas fa-envelope" style="margin-right: 8px;"></i> Verifikasi Email</h3>
             <p>Akun Anda belum diverifikasi. Silakan verifikasi email Anda terlebih dahulu.</p>
-            <p id="verificationEmailDisplay" style="font-weight: bold; color: #667eea; margin-bottom: 20px;"></p>
+            <p id="verificationEmailDisplay" style="font-weight: 600; color: #1e5a7a; margin-bottom: 20px; font-size: 14px;"></p>
             
             <div class="modal-buttons">
                 <button class="modal-btn modal-btn-secondary" onclick="closeVerificationModal()">Nanti</button>
@@ -743,7 +700,7 @@
                 </button>
             </div>
             
-            <div id="verifError" class="modal-error" style="margin-top: 15px;">
+            <div id="verifError" class="modal-error" style="margin-top: 16px;">
                 <i class="fas fa-exclamation-circle"></i> <span id="verifErrorMessage"></span>
             </div>
         </div>
@@ -861,7 +818,6 @@
                         else window.location.href = '/dashboard';
                     }, 1000);
                 } else {
-                    // Cek apakah error karena belum verified
                     if (data.needVerification && data.email) {
                         currentUnverifiedEmail = data.email;
                         document.getElementById('verificationEmailDisplay').innerText = data.email;
@@ -894,8 +850,7 @@
             setTimeout(() => alert.style.display = 'none', 4000);
         }
 
-        // ==================== FORGOT PASSWORD FLOW ====================
-        
+        // Forgot Password Functions
         function showForgotPasswordModal() {
             document.getElementById('forgotModal').style.display = 'flex';
             document.getElementById('forgotEmail').value = '';
@@ -945,13 +900,13 @@
                     document.getElementById('otpError').style.display = 'none';
                     startOtpTimer(600);
                     
-                    showAlert('Kode OTP telah dikirim ke email Anda!', 'success');
+                    showAlert('Kode verifikasi telah dikirim ke email Anda!', 'success');
                 } else {
                     document.getElementById('forgotErrorMessage').innerText = data.message;
                     document.getElementById('forgotError').style.display = 'block';
                 }
             } catch (error) {
-                document.getElementById('forgotErrorMessage').innerText = 'Gagal mengirim OTP. Coba lagi.';
+                document.getElementById('forgotErrorMessage').innerText = 'Gagal mengirim kode. Coba lagi.';
                 document.getElementById('forgotError').style.display = 'block';
             } finally {
                 btn.innerHTML = originalText;
@@ -970,15 +925,15 @@
             otpTimerInterval = setInterval(() => {
                 if (remaining <= 0) {
                     clearInterval(otpTimerInterval);
-                    timerElement.innerHTML = '⏰ Kode sudah kadaluarsa. Kirim ulang!';
-                    timerElement.style.color = '#dc3545';
+                    timerElement.innerHTML = '<i class="fas fa-hourglass-end"></i> Kode sudah kadaluarsa. Kirim ulang!';
+                    timerElement.style.color = '#dc2626';
                     resendLink.style.pointerEvents = 'auto';
                     resendLink.style.opacity = '1';
                 } else {
                     const minutes = Math.floor(remaining / 60);
                     const secs = remaining % 60;
-                    timerElement.innerHTML = `⏱️ Kode berlaku selama ${minutes}:${secs.toString().padStart(2, '0')}`;
-                    timerElement.style.color = '#f59e0b';
+                    timerElement.innerHTML = `<i class="fas fa-clock"></i> Kode berlaku ${minutes}:${secs.toString().padStart(2, '0')}`;
+                    timerElement.style.color = '#e67e22';
                     resendLink.style.pointerEvents = 'none';
                     resendLink.style.opacity = '0.5';
                     remaining--;
@@ -990,7 +945,7 @@
             const otp = document.getElementById('otpCode').value;
             
             if (!otp || otp.length !== 6) {
-                document.getElementById('otpErrorMessage').innerText = 'Masukkan kode OTP 6 digit!';
+                document.getElementById('otpErrorMessage').innerText = 'Masukkan kode 6 digit!';
                 document.getElementById('otpError').style.display = 'block';
                 return;
             }
@@ -1013,11 +968,12 @@
                     closeOtpModal();
                     showResetPasswordModal();
                 } else {
-                    document.getElementById('otpErrorMessage').innerText = data.message;
+                    // Ubah pesan error jadi "Kode OTP salah"
+                    document.getElementById('otpErrorMessage').innerText = 'Kode OTP salah. Silakan coba lagi.';
                     document.getElementById('otpError').style.display = 'block';
                 }
             } catch (error) {
-                document.getElementById('otpErrorMessage').innerText = 'Gagal verifikasi. Coba lagi.';
+                document.getElementById('otpErrorMessage').innerText = 'Kode OTP salah. Silakan coba lagi.';
                 document.getElementById('otpError').style.display = 'block';
             } finally {
                 btn.innerHTML = originalText;
@@ -1044,10 +1000,10 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showAlert('Kode OTP baru telah dikirim!', 'success');
+                    showAlert('Kode baru telah dikirim!', 'success');
                 }
             } catch (error) {
-                showAlert('Gagal mengirim ulang OTP', 'error');
+                showAlert('Gagal mengirim ulang kode', 'error');
             }
         }
 
@@ -1115,8 +1071,7 @@
             }
         }
 
-        // ==================== VERIFICATION FLOW (dari login) ====================
-        
+        // Verification Functions
         function closeVerificationModal() {
             document.getElementById('verificationModal').style.display = 'none';
             currentUnverifiedEmail = '';
@@ -1142,14 +1097,14 @@
                 if (data.success) {
                     document.getElementById('verifErrorMessage').innerText = data.message;
                     document.getElementById('verifError').style.display = 'block';
-                    document.getElementById('verifError').style.color = '#28a745';
+                    document.getElementById('verifError').style.color = '#059669';
                     setTimeout(() => {
                         closeVerificationModal();
                     }, 3000);
                 } else {
                     document.getElementById('verifErrorMessage').innerText = data.message;
                     document.getElementById('verifError').style.display = 'block';
-                    document.getElementById('verifError').style.color = '#c33';
+                    document.getElementById('verifError').style.color = '#dc2626';
                 }
             } catch (error) {
                 document.getElementById('verifErrorMessage').innerText = 'Gagal mengirim ulang verifikasi.';

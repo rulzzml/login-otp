@@ -19,99 +19,42 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0a2540 0%, #1a4d6b 50%, #2c6e8f 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
             position: relative;
-            overflow: hidden;
         }
 
-        .bubbles {
-            position: absolute;
+        /* Subtle wave effect */
+        .wave-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
-            overflow: hidden;
-            top: 0;
-            left: 0;
-        }
-
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: rise 10s infinite ease-in;
-        }
-
-        .bubble:nth-child(1) {
-            left: 10%;
-            width: 80px;
-            height: 80px;
-            animation-duration: 8s;
-        }
-        .bubble:nth-child(2) {
-            left: 20%;
-            width: 20px;
-            height: 20px;
-            animation-duration: 5s;
-            animation-delay: 1s;
-        }
-        .bubble:nth-child(3) {
-            left: 40%;
-            width: 50px;
-            height: 50px;
-            animation-duration: 7s;
-            animation-delay: 2s;
-        }
-        .bubble:nth-child(4) {
-            left: 70%;
-            width: 60px;
-            height: 60px;
-            animation-duration: 9s;
-            animation-delay: 0s;
-        }
-        .bubble:nth-child(5) {
-            left: 90%;
-            width: 30px;
-            height: 30px;
-            animation-duration: 6s;
-            animation-delay: 3s;
-        }
-
-        @keyframes rise {
-            0% {
-                bottom: -100px;
-                transform: translateX(0);
-            }
-            50% {
-                transform: translateX(100px);
-            }
-            100% {
-                bottom: 1080px;
-                transform: translateX(-200px);
-            }
+            opacity: 0.1;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,181.3C672,181,768,203,864,213.3C960,224,1056,224,1152,208C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 32px;
+            padding: 44px 40px;
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             position: relative;
             z-index: 1;
-            animation: slideUp 0.5s ease;
+            animation: fadeInUp 0.6s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        @keyframes slideUp {
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(30px);
@@ -124,139 +67,130 @@
 
         .logo {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 32px;
         }
 
-        .logo i {
-            font-size: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e5a7a, #0a3b52);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-icon i {
+            font-size: 36px;
+            color: white;
         }
 
         .logo h1 {
-            font-size: 24px;
-            margin-top: 5px;
+            font-size: 28px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #1e5a7a;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-            font-size: 22px;
-            font-weight: 700;
+        .logo p {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 400;
         }
 
         .input-group {
             position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .input-group i:first-child {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 16px;
-            transition: all 0.3s;
-            z-index: 10;
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .input-wrapper {
             position: relative;
-            width: 100%;
+        }
+
+        .input-wrapper i:first-child {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa9b9;
+            font-size: 18px;
+            z-index: 10;
+            transition: color 0.2s;
         }
 
         .input-wrapper input {
             width: 100%;
-            padding: 15px 45px 15px 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
+            padding: 16px 16px 16px 48px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
             font-size: 15px;
             font-weight: 400;
-            transition: all 0.3s;
             background: white;
+            transition: all 0.2s;
         }
 
         .input-wrapper input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #2c6e8f;
+            box-shadow: 0 0 0 3px rgba(44, 110, 143, 0.1);
+        }
+
+        .input-wrapper input::placeholder {
+            font-weight: 400;
+            color: #cbd5e1;
         }
 
         .toggle-password {
             position: absolute;
-            right: 15px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #999;
+            color: #9aa9b9;
             font-size: 18px;
-            transition: color 0.3s;
+            transition: color 0.2s;
             z-index: 10;
         }
 
         .toggle-password:hover {
-            color: #667eea;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            font-size: 15px;
-            font-weight: 400;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        input::placeholder {
-            font-weight: 300;
-            color: #999;
-        }
-
-        .input-group:focus-within i:first-child {
-            color: #667eea;
-        }
-
-        .password-section {
-            margin-bottom: 20px;
+            color: #2c6e8f;
         }
 
         .password-hint {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 400;
-            color: #666;
-            margin-top: 5px;
-            margin-left: 10px;
+            color: #64748b;
+            margin-top: 6px;
+            margin-left: 8px;
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
         .password-hint i {
-            color: #667eea;
-            font-size: 12px;
+            color: #2c6e8f;
+            font-size: 11px;
         }
 
         .strength-meter {
             height: 4px;
-            background: #e0e0e0;
+            background: #e2e8f0;
             border-radius: 10px;
             margin-top: 8px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             overflow: hidden;
         }
 
@@ -279,33 +213,35 @@
 
         .strength-bar.strong {
             width: 100%;
-            background: #22c55e;
+            background: #10b981;
         }
 
         .terms {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin: 20px 0 10px;
-            font-size: 13px;
+            gap: 10px;
+            margin: 24px 0 16px;
+            font-size: 12px;
             font-weight: 400;
-            color: #666;
+            color: #64748b;
         }
 
         .terms input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #667eea;
+            width: 16px;
+            height: 16px;
+            accent-color: #2c6e8f;
             cursor: pointer;
+            margin: 0;
         }
 
         .terms label {
             cursor: pointer;
+            color: #475569;
         }
 
         .terms a {
-            color: #667eea;
+            color: #2c6e8f;
             text-decoration: none;
             font-weight: 600;
         }
@@ -317,47 +253,30 @@
         button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e5a7a, #0f3d55);
             color: white;
             border: none;
-            border-radius: 15px;
+            border-radius: 16px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.7s;
+            margin-top: 8px;
         }
 
         button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        button:hover:not(:disabled)::before {
-            left: 100%;
+            background: linear-gradient(135deg, #236e94, #124a66);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -5px rgba(30, 90, 122, 0.3);
         }
 
         button:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
 
         .fa-spinner {
@@ -371,52 +290,45 @@
 
         .link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
         }
 
         .link a {
-            color: #667eea;
+            color: #2c6e8f;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .link a:hover {
-            color: #764ba2;
+            color: #1e5a7a;
             gap: 12px;
         }
 
         .alert {
-            background: linear-gradient(145deg, #fee, #ffd5d5);
-            color: #c33;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 24px;
             text-align: center;
             display: none;
-            animation: shake 0.5s ease;
-            border-left: 4px solid #c33;
-            font-size: 14px;
+            border-left: 4px solid #dc2626;
+            font-size: 13px;
             font-weight: 500;
         }
 
-        .alert.warning {
-            background: linear-gradient(145deg, #fff3cd, #ffeeba);
-            color: #856404;
-            border-left-color: #ffc107;
-        }
-
         .alert.success {
-            background: linear-gradient(145deg, #d4edda, #c3e6cb);
-            color: #155724;
-            border-left-color: #28a745;
+            background: #ecfdf5;
+            color: #059669;
+            border-left-color: #059669;
         }
 
-        /* MODAL OTP STYLES */
+        /* Modal Styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -424,13 +336,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s ease;
         }
 
         @keyframes fadeIn {
@@ -440,104 +352,115 @@
 
         .modal-content {
             background: white;
-            border-radius: 40px;
-            padding: 40px;
+            border-radius: 32px;
+            padding: 36px 32px;
             width: 100%;
-            max-width: 420px;
-            animation: slideUp 0.4s ease;
-            position: relative;
+            max-width: 400px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-content h3 {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 10px;
-            color: #333;
+            margin-bottom: 8px;
+            color: #1e293b;
             text-align: center;
         }
 
         .modal-content p {
-            color: #666;
-            margin-bottom: 25px;
+            color: #64748b;
+            margin-bottom: 24px;
             text-align: center;
             font-size: 14px;
+            line-height: 1.5;
         }
 
         .modal-input-wrapper {
             position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
 
         .modal-input-wrapper i {
             position: absolute;
-            left: 18px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #667eea;
-            font-size: 22px;
+            color: #2c6e8f;
+            font-size: 18px;
         }
 
         .modal-input {
             width: 100%;
-            padding: 18px 18px 18px 55px;
-            border: 2px solid #e0e0e0;
-            border-radius: 20px;
-            font-size: 18px;
+            padding: 14px 16px 14px 48px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 16px;
             font-weight: 500;
             text-align: center;
-            letter-spacing: 8px;
+            letter-spacing: 4px;
             font-family: monospace;
         }
 
         .modal-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2c6e8f;
+            box-shadow: 0 0 0 3px rgba(44, 110, 143, 0.1);
         }
 
         .modal-buttons {
             display: flex;
             gap: 12px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .modal-btn {
             flex: 1;
-            padding: 16px;
+            padding: 14px;
             border: none;
-            border-radius: 20px;
+            border-radius: 16px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 15px;
-            transition: all 0.3s;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .modal-btn-primary {
-            background: linear-gradient(145deg, #667eea, #764ba2);
+            background: #1e5a7a;
             color: white;
         }
 
         .modal-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            background: #124a66;
         }
 
         .modal-btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+            background: #f1f5f9;
+            color: #334155;
         }
 
         .modal-btn-secondary:hover {
-            background: #e0e0e0;
+            background: #e2e8f0;
         }
 
         .resend-link {
             text-align: center;
             margin-top: 20px;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .resend-link a {
-            color: #667eea;
+            color: #2c6e8f;
             text-decoration: none;
             cursor: pointer;
             font-weight: 500;
@@ -549,89 +472,80 @@
 
         .timer {
             text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #f59e0b;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #e67e22;
             font-weight: 500;
         }
 
         .modal-error {
-            color: #c33;
-            font-size: 13px;
+            color: #dc2626;
+            font-size: 12px;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 8px;
             display: none;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
+        .modal-error i {
+            margin-right: 4px;
         }
 
         @media (max-width: 480px) {
             .container {
-                padding: 30px 20px;
-            }
-            h2 {
-                font-size: 20px;
-            }
-            input, .input-wrapper input {
-                padding: 14px 40px 14px 40px;
+                padding: 32px 24px;
             }
             .modal-content {
-                padding: 30px 24px;
+                padding: 28px 24px;
             }
             .modal-input {
-                font-size: 16px;
-                letter-spacing: 5px;
+                font-size: 14px;
+                letter-spacing: 3px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="bubbles">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-    </div>
+    <div class="wave-bg"></div>
 
     <div class="container">
         <div class="logo">
-            <i class="fas fa-store"></i>
+            <div class="logo-icon">
+                <i class="fas fa-store"></i>
+            </div>
             <h1>Arya Store</h1>
+            <p>Daftar akun baru</p>
         </div>
-        
-        <h2><i class="fas fa-user-plus" style="margin-right: 8px;"></i> Buat Akun Baru</h2>
-        
+
         <div id="alert" class="alert">
             <i class="fas fa-exclamation-circle"></i> <span id="alertMessage"></span>
         </div>
-        
+
         <div class="input-group">
-            <i class="fas fa-user"></i>
-            <input type="text" id="username" placeholder="Username" autofocus>
+            <div class="input-wrapper">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="Username" autofocus>
+            </div>
         </div>
-        
+
         <div class="input-group">
-            <i class="fas fa-envelope"></i>
-            <input type="email" id="email" placeholder="Email">
+            <div class="input-wrapper">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="Email">
+            </div>
         </div>
-        
+
         <div class="input-group">
-            <i class="fas fa-phone-alt"></i>
-            <input type="tel" id="phone" placeholder="Nomor HP">
+            <div class="input-wrapper">
+                <i class="fas fa-phone-alt"></i>
+                <input type="tel" id="phone" placeholder="Nomor HP">
+            </div>
         </div>
-        
-        <div class="password-section">
-            <div class="input-group">
+
+        <div class="input-group">
+            <div class="input-wrapper">
                 <i class="fas fa-lock"></i>
-                <div class="input-wrapper">
-                    <input type="password" id="password" placeholder="Password" onkeyup="checkPasswordStrength()" oninput="checkPasswordStrength()">
-                    <i class="fas fa-eye toggle-password" id="togglePassword"></i>
-                </div>
+                <input type="password" id="password" placeholder="Password" onkeyup="checkPasswordStrength()" oninput="checkPasswordStrength()">
+                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
             </div>
             <div class="password-hint">
                 <i class="fas fa-info-circle"></i> Minimal 6 karakter
@@ -640,38 +554,38 @@
                 <div class="strength-bar" id="strengthBar"></div>
             </div>
         </div>
-        
+
         <div class="input-group">
-            <i class="fas fa-lock"></i>
             <div class="input-wrapper">
+                <i class="fas fa-check-circle"></i>
                 <input type="password" id="confirmPassword" placeholder="Konfirmasi Password">
                 <i class="fas fa-eye toggle-password" id="toggleConfirmPassword"></i>
             </div>
         </div>
-        
+
         <div class="terms">
             <input type="checkbox" id="termsCheckbox">
             <label for="termsCheckbox">Dengan mendaftar, Anda menyetujui <a href="#">Syarat & Ketentuan</a></label>
         </div>
-        
+
         <button onclick="register()" id="registerBtn">
             <span>Daftar Sekarang</span>
             <i class="fas fa-arrow-right"></i>
         </button>
-        
+
         <div class="link">
-            <a href="/login"><i class="fas fa-sign-in-alt"></i> Sudah punya akun? Login</a>
+            <a href="/login"><i class="fas fa-sign-in-alt"></i> Sudah punya akun? Masuk</a>
         </div>
     </div>
 
-    <!-- MODAL OTP VERIFICATION -->
+    <!-- Modal OTP Verification -->
     <div id="otpModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>📧 Verifikasi Email</h3>
+            <h3><i class="fas fa-shield-alt" style="margin-right: 8px;"></i> Verifikasi Email</h3>
             <p>Kode verifikasi telah dikirim ke <strong id="otpEmailDisplay"></strong></p>
             
             <div class="modal-input-wrapper">
-                <i class="fas fa-key"></i>
+                <i class="fas fa-qrcode"></i>
                 <input type="text" id="otpCode" class="modal-input" placeholder="000000" maxlength="6" autocomplete="off">
             </div>
             
@@ -694,7 +608,7 @@
     </div>
 
     <script>
-        // Toggle Password Visibility
+        // Toggle Password
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         
@@ -717,7 +631,6 @@
         
         document.getElementById('username').focus();
 
-        // Variables for OTP
         let currentRegisterEmail = '';
         let otpTimerInterval = null;
 
@@ -764,47 +677,47 @@
             const termsChecked = document.getElementById('termsCheckbox').checked;
             
             if (!username) {
-                showAlert('Username wajib diisi!');
+                showAlert('Username wajib diisi!', 'error');
                 return;
             }
             
             if (username.length < 3) {
-                showAlert('Username minimal 3 karakter!');
+                showAlert('Username minimal 3 karakter!', 'error');
                 return;
             }
             
             if (!password) {
-                showAlert('Password wajib diisi!');
+                showAlert('Password wajib diisi!', 'error');
                 return;
             }
             
             if (password.length < 6) {
-                showAlert('Password minimal 6 karakter!');
+                showAlert('Password minimal 6 karakter!', 'error');
                 return;
             }
             
             if (password !== confirm) {
-                showAlert('Password tidak cocok!');
+                showAlert('Password tidak cocok!', 'error');
                 return;
             }
             
             if (!email && !phone) {
-                showAlert('Email atau Nomor HP harus diisi!');
+                showAlert('Email atau Nomor HP harus diisi!', 'error');
                 return;
             }
             
             if (email && !email.includes('@')) {
-                showAlert('Format email tidak valid!');
+                showAlert('Format email tidak valid!', 'error');
                 return;
             }
             
             if (phone && !/^[0-9+\-\s]+$/.test(phone)) {
-                showAlert('Format nomor HP tidak valid!');
+                showAlert('Format nomor HP tidak valid!', 'error');
                 return;
             }
             
             if (!termsChecked) {
-                showAlert('Anda harus menyetujui Syarat & Ketentuan');
+                showAlert('Anda harus menyetujui Syarat & Ketentuan', 'error');
                 return;
             }
             
@@ -826,10 +739,8 @@
                     currentRegisterEmail = email;
                     showAlert('Registrasi berhasil! Silakan verifikasi email Anda.', 'success');
                     
-                    // Kirim OTP verifikasi
                     await sendVerificationOtp(email);
                     
-                    // Reset form
                     document.getElementById('username').value = '';
                     document.getElementById('email').value = '';
                     document.getElementById('phone').value = '';
@@ -839,7 +750,6 @@
                     document.getElementById('strengthBar').className = 'strength-bar';
                     document.getElementById('strengthBar').style.width = '0';
                     
-                    // Tampilkan modal OTP
                     document.getElementById('otpEmailDisplay').innerText = email;
                     document.getElementById('otpModal').style.display = 'flex';
                     document.getElementById('otpCode').value = '';
@@ -848,12 +758,12 @@
                 } else {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                    showAlert(data.error || 'Registrasi gagal');
+                    showAlert(data.error || 'Registrasi gagal', 'error');
                 }
             } catch (error) {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                showAlert('Terjadi kesalahan. Silakan coba lagi.');
+                showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
             }
         }
         
@@ -877,7 +787,7 @@
             const otp = document.getElementById('otpCode').value;
             
             if (!otp || otp.length !== 6) {
-                document.getElementById('otpErrorMessage').innerText = 'Masukkan kode OTP 6 digit!';
+                document.getElementById('otpErrorMessage').innerText = 'Masukkan kode 6 digit!';
                 document.getElementById('otpError').style.display = 'block';
                 return;
             }
@@ -900,14 +810,14 @@
                     closeOtpModal();
                     showAlert('Email berhasil diverifikasi! Silakan login.', 'success');
                     setTimeout(() => {
-                        window.location.href = '/login';
+                        window.location.href = '/login?verified=true';
                     }, 2000);
                 } else {
-                    document.getElementById('otpErrorMessage').innerText = data.message;
+                    document.getElementById('otpErrorMessage').innerText = 'Kode OTP salah. Silakan coba lagi.';
                     document.getElementById('otpError').style.display = 'block';
                 }
             } catch (error) {
-                document.getElementById('otpErrorMessage').innerText = 'Gagal verifikasi. Coba lagi.';
+                document.getElementById('otpErrorMessage').innerText = 'Kode OTP salah. Silakan coba lagi.';
                 document.getElementById('otpError').style.display = 'block';
             } finally {
                 btn.innerHTML = originalText;
@@ -918,7 +828,7 @@
         async function resendVerificationOtp() {
             await sendVerificationOtp(currentRegisterEmail);
             startOtpTimer(600);
-            showAlert('Kode OTP baru telah dikirim!', 'success');
+            showAlert('Kode baru telah dikirim!', 'success');
         }
 
         function startOtpTimer(seconds) {
@@ -932,15 +842,15 @@
             otpTimerInterval = setInterval(() => {
                 if (remaining <= 0) {
                     clearInterval(otpTimerInterval);
-                    timerElement.innerHTML = '⏰ Kode sudah kadaluarsa. Kirim ulang!';
-                    timerElement.style.color = '#dc3545';
+                    timerElement.innerHTML = '<i class="fas fa-hourglass-end"></i> Kode sudah kadaluarsa. Kirim ulang!';
+                    timerElement.style.color = '#dc2626';
                     resendLink.style.pointerEvents = 'auto';
                     resendLink.style.opacity = '1';
                 } else {
                     const minutes = Math.floor(remaining / 60);
                     const secs = remaining % 60;
-                    timerElement.innerHTML = `⏱️ Kode berlaku selama ${minutes}:${secs.toString().padStart(2, '0')}`;
-                    timerElement.style.color = '#f59e0b';
+                    timerElement.innerHTML = `<i class="fas fa-clock"></i> Kode berlaku ${minutes}:${secs.toString().padStart(2, '0')}`;
+                    timerElement.style.color = '#e67e22';
                     resendLink.style.pointerEvents = 'none';
                     resendLink.style.opacity = '0.5';
                     remaining--;
@@ -959,18 +869,12 @@
             
             alertMsg.innerText = msg;
             alert.className = 'alert';
-            
-            if (type === 'warning') {
-                alert.classList.add('warning');
-            } else if (type === 'success') {
-                alert.classList.add('success');
-            }
-            
+            if (type === 'success') alert.classList.add('success');
             alert.style.display = 'block';
             
             setTimeout(() => {
                 alert.style.display = 'none';
-                alert.classList.remove('warning', 'success');
+                alert.classList.remove('success');
             }, 5000);
         }
         
