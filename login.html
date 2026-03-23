@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Masuk - Rulzz Official</title>
+    <link rel="icon" href="https://cdn.rulzzoffc.my.id/files/0/IMG_20260212_160949_623_1773970062135_8k6y3c.jpg">
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +45,6 @@
             position: relative;
         }
 
-        /* Animated background effect */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -386,6 +386,19 @@
             display: block;
         }
 
+        .google-btn-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #googleButton {
+            width: 100%;
+            min-height: 44px;
+            display: flex;
+            justify-content: center;
+        }
+
         /* Modal Styles */
         .modal-overlay {
             display: none;
@@ -573,7 +586,7 @@
     <div class="container">
         <div class="logo">
             <div class="logo-icon">
-                <img src="https://i.ibb.co.com/60ZFz4Jg/IMG-20250915-WA0031.jpg" alt="Rulzz Official Logo">
+                <img src="https://cdn.rulzzoffc.my.id/files/0/IMG_20260212_160949_623_1773970062135_8k6y3c.jpg" alt="Rulzz Official Logo">
             </div>
             <h1>Rulzz Official</h1>
             <p>Selamat datang kembali! Silakan masuk ke akun Anda</p>
@@ -629,6 +642,10 @@
             <span class="divider-line"></span>
             <span>atau</span>
             <span class="divider-line"></span>
+        </div>
+
+        <div class="google-btn-container">
+            <div id="googleButton"></div>
         </div>
 
         <div class="register-link">
@@ -745,6 +762,69 @@
     </div>
 
     <script>
+        // Load Google Config from Backend
+        async function loadGoogleConfig() {
+            try {
+                const res = await fetch('/api/google/config');
+                const data = await res.json();
+                
+                if (data.success) {
+                    window.handleGoogleSignIn = handleGoogleSignIn;
+                    
+                    google.accounts.id.initialize({
+                        client_id: data.clientId,
+                        callback: handleGoogleSignIn,
+                        auto_select: false,
+                        cancel_on_tap_outside: true
+                    });
+                    
+                    google.accounts.id.renderButton(
+                        document.getElementById('googleButton'),
+                        {
+                            type: 'standard',
+                            theme: 'outline',
+                            size: 'large',
+                            text: 'signin_with',
+                            shape: 'rectangular',
+                            logo_alignment: 'left',
+                            width: '400'
+                        }
+                    );
+                }
+            } catch (error) {
+                console.error('Error loading Google config:', error);
+            }
+        }
+
+        // Handle Google Sign-In
+        async function handleGoogleSignIn(response) {
+            const credential = response.credential;
+            
+            try {
+                const res = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showAlert('Login berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    showAlert(data.message || 'Login gagal', 'error');
+                }
+            } catch (error) {
+                showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        }
+
         // Toggle Password
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -847,12 +927,14 @@
                 const data = await res.json();
 
                 if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
                     loginAttempts = 0;
                     updateAttemptCounter();
                     showAlert('Login berhasil! Mengalihkan...', 'success');
                     setTimeout(() => {
                         if (data.redirect) window.location.href = data.redirect;
-                        else if (data.user?.role === 'admin') window.location.href = '/admin';
                         else window.location.href = '/dashboard';
                     }, 1000);
                 } else {
@@ -888,7 +970,7 @@
             setTimeout(() => alert.style.display = 'none', 4000);
         }
 
-        // Forgot Password Functions
+        // Forgot Password Functions (sama seperti sebelumnya)
         function showForgotPasswordModal() {
             document.getElementById('forgotModal').style.display = 'flex';
             document.getElementById('forgotEmail').value = '';
@@ -1187,6 +1269,9 @@
             if (event.target === resetModal) closeResetModal();
             if (event.target === verifModal) closeVerificationModal();
         }
+
+        // Load Google Config saat halaman dimuat
+        loadGoogleConfig();
     </script>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daftar - Rulzz Official</title>
+    <link rel="icon" href="https://cdn.rulzzoffc.my.id/files/0/IMG_20260212_160949_623_1773970062135_8k6y3c.jpg">
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -311,6 +312,22 @@
             100% { transform: rotate(360deg); }
         }
 
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 28px 0;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
         .link {
             text-align: center;
             margin-top: 24px;
@@ -349,6 +366,19 @@
             background: rgba(34, 197, 94, 0.1);
             color: var(--success);
             border-left-color: var(--success);
+        }
+
+        .google-btn-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #googleButton {
+            width: 100%;
+            min-height: 44px;
+            display: flex;
+            justify-content: center;
         }
 
         /* Modal Styles */
@@ -538,7 +568,7 @@
     <div class="container">
         <div class="logo">
             <div class="logo-icon">
-                <img src="https://i.ibb.co.com/60ZFz4Jg/IMG-20250915-WA0031.jpg" alt="Rulzz Official Logo">
+                <img src="https://cdn.rulzzoffc.my.id/files/0/IMG_20260212_160949_623_1773970062135_8k6y3c.jpg" alt="Rulzz Official Logo">
             </div>
             <h1>Rulzz Official</h1>
             <p>Daftar akun baru</p>
@@ -601,6 +631,16 @@
             <i class="fas fa-arrow-right"></i>
         </button>
 
+        <div class="divider">
+            <span class="divider-line"></span>
+            <span>atau</span>
+            <span class="divider-line"></span>
+        </div>
+
+        <div class="google-btn-container">
+            <div id="googleButton"></div>
+        </div>
+
         <div class="link">
             <a href="/login"><i class="fas fa-sign-in-alt"></i> Sudah punya akun? Masuk</a>
         </div>
@@ -636,6 +676,69 @@
     </div>
 
     <script>
+        // Load Google Config from Backend
+        async function loadGoogleConfig() {
+            try {
+                const res = await fetch('/api/google/config');
+                const data = await res.json();
+                
+                if (data.success) {
+                    window.handleGoogleSignIn = handleGoogleSignIn;
+                    
+                    google.accounts.id.initialize({
+                        client_id: data.clientId,
+                        callback: handleGoogleSignIn,
+                        auto_select: false,
+                        cancel_on_tap_outside: true
+                    });
+                    
+                    google.accounts.id.renderButton(
+                        document.getElementById('googleButton'),
+                        {
+                            type: 'standard',
+                            theme: 'outline',
+                            size: 'large',
+                            text: 'signup_with',
+                            shape: 'rectangular',
+                            logo_alignment: 'left',
+                            width: '400'
+                        }
+                    );
+                }
+            } catch (error) {
+                console.error('Error loading Google config:', error);
+            }
+        }
+
+        // Handle Google Sign-In (Register/Login via Google)
+        async function handleGoogleSignIn(response) {
+            const credential = response.credential;
+            
+            try {
+                const res = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showAlert('Login berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    showAlert(data.message || 'Login gagal', 'error');
+                }
+            } catch (error) {
+                showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        }
+
         // Toggle Password
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -924,6 +1027,9 @@
             const otpModal = document.getElementById('otpModal');
             if (event.target === otpModal) closeOtpModal();
         }
+
+        // Load Google Config saat halaman dimuat
+        loadGoogleConfig();
     </script>
 </body>
 </html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Rulzz Official</title>
+    <link rel="icon" href="https://cdn.rulzzoffc.my.id/files/0/IMG_20260212_160949_623_1773970062135_8k6y3c.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-1: #0a1129;
+            --bg-2: #0f1a3d;
+            --card: rgba(30, 58, 138, 0.15);
+            --muted: #93c5fd;
+            --accent-from: #2563eb;
+            --accent-to: #3b82f6;
+            --glass-border: rgba(59, 130, 246, 0.15);
+            --text: #e0f2fe;
+            --shadow: rgba(2, 8, 30, 0.6);
+            --transition: 240ms cubic-bezier(.2,.9,.2,1);
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 25px 45px var(--shadow);
+            position: relative;
+            z-index: 1;
+            border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            object-fit: cover;
+            border: 4px solid var(--accent-from);
+            margin-bottom: 20px;
+            background: var(--card);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .email {
+            color: var(--muted);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--error), #b91c1c);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text);
+            font-size: 18px;
+        }
+
+        .loading i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-from);
+            border: 1px solid var(--accent-from);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="dashboard-container" id="dashboardContent" style="display: none;">
+        <div class="profile-header">
+            <img id="profilePicture" class="profile-picture" src="" alt="Profile Picture">
+            <h1 id="userName"></h1>
+            <div class="email" id="userEmail"></div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-user-circle"></i> Username</span>
+                <span class="info-value" id="userUsername"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-phone-alt"></i> Nomor HP</span>
+                <span class="info-value" id="userPhone"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-plug"></i> Provider</span>
+                <span class="info-value" id="userProvider"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-shield-alt"></i> Status Verifikasi</span>
+                <span class="info-value" id="userVerified"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-calendar-alt"></i> Bergabung Sejak</span>
+                <span class="info-value" id="userJoined"></span>
+            </div>
+        </div>
+
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Keluar
+        </button>
+    </div>
+
+    <div class="loading" id="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        Memuat profil...
+    </div>
+
+    <script>
+        async function loadProfile() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    const user = data.user;
+                    
+                    document.getElementById('profilePicture').src = user.picture || `https://ui-avatars.com/api/?background=2563eb&color=fff&name=${encodeURIComponent(user.name || user.username || user.email)}`;
+                    document.getElementById('userName').innerText = user.name || user.username || user.email;
+                    document.getElementById('userEmail').innerText = user.email;
+                    document.getElementById('userUsername').innerHTML = `<span class="badge badge-info">${user.username || '-'}</span>`;
+                    document.getElementById('userPhone').innerHTML = user.phone ? `<span class="badge badge-info">${user.phone}</span>` : '<span class="badge badge-warning">Belum diisi</span>';
+                    
+                    if (user.provider === 'google') {
+                        document.getElementById('userProvider').innerHTML = '<span class="badge badge-success"><i class="fab fa-google"></i> Google</span>';
+                    } else {
+                        document.getElementById('userProvider').innerHTML = '<span class="badge badge-info"><i class="fas fa-envelope"></i> Email/Password</span>';
+                    }
+                    
+                    document.getElementById('userVerified').innerHTML = user.verified ? 
+                        '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Terverifikasi</span>' : 
+                        '<span class="badge badge-warning"><i class="fas fa-clock"></i> Belum diverifikasi</span>';
+                    
+                    document.getElementById('userJoined').innerText = new Date(user.createdAt).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('dashboardContent').style.display = 'block';
+                } else {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+        
+        loadProfile();
+    </script>
+</body>
+</html>
