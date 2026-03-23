@@ -22,7 +22,7 @@ const EMAIL_USER = 'rulzzofficial628@gmail.com';
 const EMAIL_PASS = 'ivqh ufzo ebvv hsad';
 
 // Google OAuth Config
-const GOOGLE_CLIENT_ID = '989960234815-22rinl69v8q50kus2v17b408tol1pb1v.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '448256608455-jvsrv32bae7a47t694husjk9f5v8fref.apps.googleusercontent.com';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 let db;
